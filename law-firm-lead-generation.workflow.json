@@ -1,0 +1,1083 @@
+{
+  "name": "Law Firm Lead Generation & Intake Automation",
+  "nodes": [
+    {
+      "id": "550e8400-0001",
+      "name": "Web Form Intake",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [100, 200],
+      "webhookId": "wh-webform-intake",
+      "parameters": {
+        "path": "law-firm-web-intake",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "notes": "Receives POST from website consultation forms. Expected fields: firstName, lastName, phone, email, caseType, description, jurisdiction, urgency, adverseParty"
+    },
+    {
+      "id": "550e8400-0002",
+      "name": "Voice AI Intake",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [100, 420],
+      "webhookId": "wh-voice-intake",
+      "parameters": {
+        "path": "voice-intake-callback",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "notes": "Retell AI / Vapi post-call callback. Fields: callId, callerPhone, transcript, extractedData{firstName,lastName,email,caseType,urgency,adverseParty}"
+    },
+    {
+      "id": "550e8400-0003",
+      "name": "Chat Widget Intake",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [100, 640],
+      "webhookId": "wh-chat-intake",
+      "parameters": {
+        "path": "chat-intake",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "notes": "Intercom / Drift / custom chat widget webhook after intake conversation completes"
+    },
+    {
+      "id": "550e8400-0004",
+      "name": "Email Intake",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [100, 860],
+      "parameters": {
+        "mailbox": "INBOX",
+        "options": {
+          "allowUnauthorizedCerts": false,
+          "forceReconnect": 300
+        }
+      },
+      "credentials": {
+        "imap": {
+          "id": "cred-imap",
+          "name": "Law Firm Intake Email (IMAP)"
+        }
+      },
+      "notes": "Monitors intake@firmname.com — configure IMAP credentials in n8n"
+    },
+    {
+      "id": "550e8400-0005",
+      "name": "Referral Intake",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [100, 1080],
+      "webhookId": "wh-referral-intake",
+      "parameters": {
+        "path": "referral-intake",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "notes": "Receives referrals from attorney networks, Google Business, partner firms"
+    },
+    {
+      "id": "550e8400-0006",
+      "name": "Normalize Web Form",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [380, 200],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "fields": {
+          "values": [
+            { "name": "firstName",      "type": "string", "value": "={{ $json.firstName || '' }}" },
+            { "name": "lastName",       "type": "string", "value": "={{ $json.lastName || '' }}" },
+            { "name": "fullName",       "type": "string", "value": "={{ ($json.firstName + ' ' + $json.lastName).trim() }}" },
+            { "name": "phone",          "type": "string", "value": "={{ $json.phone || '' }}" },
+            { "name": "email",          "type": "string", "value": "={{ $json.email || '' }}" },
+            { "name": "caseType",       "type": "string", "value": "={{ $json.caseType || $json.practiceArea || '' }}" },
+            { "name": "description",    "type": "string", "value": "={{ $json.description || $json.message || '' }}" },
+            { "name": "jurisdiction",   "type": "string", "value": "={{ $json.state || $json.jurisdiction || '' }}" },
+            { "name": "urgency",        "type": "string", "value": "={{ $json.urgency || 'normal' }}" },
+            { "name": "adverseParties", "type": "string", "value": "={{ $json.adverseParty || '' }}" },
+            { "name": "referredBy",     "type": "string", "value": "={{ $json.referredBy || '' }}" },
+            { "name": "source",         "type": "string", "value": "web_form" },
+            { "name": "intakeTimestamp","type": "string", "value": "={{ new Date().toISOString() }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "550e8400-0007",
+      "name": "Normalize Voice",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [380, 420],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "fields": {
+          "values": [
+            { "name": "firstName",      "type": "string", "value": "={{ $json.extractedData?.firstName || $json.callerName?.split(' ')[0] || '' }}" },
+            { "name": "lastName",       "type": "string", "value": "={{ $json.extractedData?.lastName || $json.callerName?.split(' ').slice(1).join(' ') || '' }}" },
+            { "name": "fullName",       "type": "string", "value": "={{ $json.extractedData?.fullName || $json.callerName || '' }}" },
+            { "name": "phone",          "type": "string", "value": "={{ $json.callerPhone || $json.extractedData?.phone || '' }}" },
+            { "name": "email",          "type": "string", "value": "={{ $json.extractedData?.email || '' }}" },
+            { "name": "caseType",       "type": "string", "value": "={{ $json.extractedData?.caseType || '' }}" },
+            { "name": "description",    "type": "string", "value": "={{ $json.transcript || $json.extractedData?.description || '' }}" },
+            { "name": "jurisdiction",   "type": "string", "value": "={{ $json.extractedData?.jurisdiction || '' }}" },
+            { "name": "urgency",        "type": "string", "value": "={{ $json.extractedData?.urgency || 'normal' }}" },
+            { "name": "adverseParties", "type": "string", "value": "={{ $json.extractedData?.adverseParty || '' }}" },
+            { "name": "referredBy",     "type": "string", "value": "={{ $json.extractedData?.referredBy || '' }}" },
+            { "name": "source",         "type": "string", "value": "voice_call" },
+            { "name": "callId",         "type": "string", "value": "={{ $json.callId || '' }}" },
+            { "name": "intakeTimestamp","type": "string", "value": "={{ new Date().toISOString() }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "550e8400-0008",
+      "name": "Normalize Chat",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [380, 640],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "fields": {
+          "values": [
+            { "name": "firstName",      "type": "string", "value": "={{ $json.visitor?.name?.split(' ')[0] || $json.contact?.firstName || '' }}" },
+            { "name": "lastName",       "type": "string", "value": "={{ $json.visitor?.name?.split(' ').slice(1).join(' ') || $json.contact?.lastName || '' }}" },
+            { "name": "fullName",       "type": "string", "value": "={{ $json.visitor?.name || (($json.contact?.firstName || '') + ' ' + ($json.contact?.lastName || '')).trim() }}" },
+            { "name": "phone",          "type": "string", "value": "={{ $json.visitor?.phone || $json.contact?.phone || '' }}" },
+            { "name": "email",          "type": "string", "value": "={{ $json.visitor?.email || $json.contact?.email || '' }}" },
+            { "name": "caseType",       "type": "string", "value": "={{ $json.customAttributes?.caseType || '' }}" },
+            { "name": "description",    "type": "string", "value": "={{ $json.conversationSummary || $json.lastMessage || '' }}" },
+            { "name": "jurisdiction",   "type": "string", "value": "={{ $json.customAttributes?.state || '' }}" },
+            { "name": "urgency",        "type": "string", "value": "={{ $json.customAttributes?.urgency || 'normal' }}" },
+            { "name": "adverseParties", "type": "string", "value": "={{ $json.customAttributes?.adverseParty || '' }}" },
+            { "name": "referredBy",     "type": "string", "value": "={{ $json.customAttributes?.referredBy || '' }}" },
+            { "name": "source",         "type": "string", "value": "chat_widget" },
+            { "name": "intakeTimestamp","type": "string", "value": "={{ new Date().toISOString() }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "550e8400-0009",
+      "name": "Normalize Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [380, 860],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "fields": {
+          "values": [
+            { "name": "firstName",      "type": "string", "value": "={{ $json.from?.name?.split(' ')[0] || '' }}" },
+            { "name": "lastName",       "type": "string", "value": "={{ $json.from?.name?.split(' ').slice(1).join(' ') || '' }}" },
+            { "name": "fullName",       "type": "string", "value": "={{ $json.from?.name || '' }}" },
+            { "name": "phone",          "type": "string", "value": "" },
+            { "name": "email",          "type": "string", "value": "={{ $json.from?.address || '' }}" },
+            { "name": "caseType",       "type": "string", "value": "" },
+            { "name": "description",    "type": "string", "value": "={{ ($json.subject || '') + ' | ' + ($json.text || '').substring(0, 2000) }}" },
+            { "name": "jurisdiction",   "type": "string", "value": "" },
+            { "name": "urgency",        "type": "string", "value": "normal" },
+            { "name": "adverseParties", "type": "string", "value": "" },
+            { "name": "referredBy",     "type": "string", "value": "" },
+            { "name": "source",         "type": "string", "value": "email" },
+            { "name": "intakeTimestamp","type": "string", "value": "={{ new Date().toISOString() }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "550e8400-0010",
+      "name": "Normalize Referral",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [380, 1080],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "fields": {
+          "values": [
+            { "name": "firstName",      "type": "string", "value": "={{ $json.clientFirstName || $json.firstName || '' }}" },
+            { "name": "lastName",       "type": "string", "value": "={{ $json.clientLastName || $json.lastName || '' }}" },
+            { "name": "fullName",       "type": "string", "value": "={{ $json.clientName || (($json.clientFirstName || '') + ' ' + ($json.clientLastName || '')).trim() }}" },
+            { "name": "phone",          "type": "string", "value": "={{ $json.phone || $json.clientPhone || '' }}" },
+            { "name": "email",          "type": "string", "value": "={{ $json.email || $json.clientEmail || '' }}" },
+            { "name": "caseType",       "type": "string", "value": "={{ $json.caseType || $json.practiceArea || '' }}" },
+            { "name": "description",    "type": "string", "value": "={{ $json.caseDescription || $json.notes || '' }}" },
+            { "name": "jurisdiction",   "type": "string", "value": "={{ $json.state || $json.jurisdiction || '' }}" },
+            { "name": "urgency",        "type": "string", "value": "={{ $json.urgency || 'normal' }}" },
+            { "name": "adverseParties", "type": "string", "value": "={{ $json.adverseParty || '' }}" },
+            { "name": "referredBy",     "type": "string", "value": "={{ $json.referringAttorney || $json.referralSource || '' }}" },
+            { "name": "source",         "type": "string", "value": "referral" },
+            { "name": "intakeTimestamp","type": "string", "value": "={{ new Date().toISOString() }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "550e8400-0011",
+      "name": "Validate & Build AI Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 640],
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nif (!data.email && !data.phone) {\n  throw new Error('Lead missing both email and phone — cannot process');\n}\n\nconst leadId = 'LEAD-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();\n\nconst lead = {\n  leadId,\n  firstName:      (data.firstName || '').trim(),\n  lastName:       (data.lastName || '').trim(),\n  fullName:       (data.fullName || ((data.firstName || '') + ' ' + (data.lastName || '')).trim()),\n  phone:          (data.phone || '').replace(/[^0-9+\\-()\\s]/g, ''),\n  email:          (data.email || '').toLowerCase().trim(),\n  caseType:       (data.caseType || '').trim(),\n  description:    (data.description || '').trim().substring(0, 4000),\n  jurisdiction:   (data.jurisdiction || '').trim(),\n  urgency:        data.urgency || 'normal',\n  source:         data.source || 'unknown',\n  adverseParties: (data.adverseParties || '').trim(),\n  referredBy:     (data.referredBy || '').trim(),\n  callId:         data.callId || '',\n  intakeTimestamp:data.intakeTimestamp || new Date().toISOString()\n};\n\nconst systemPrompt = `You are an intake qualification AI for a law firm. Your ONLY role is to evaluate whether a potential client meets the criteria for the firm to schedule a consultation.\n\nCRITICAL GUARDRAILS:\n- You do NOT provide legal advice, case evaluations, or predictions of legal outcomes\n- You do NOT assess the merits or likely success of any case\n- You only determine whether the inquiry fits the firm's practice areas and intake criteria\n\nPRACTICE AREAS SERVED: Personal Injury, Family Law, Business Litigation, Estate Planning, Employment Law, Criminal Defense, Real Estate Law, Immigration\n\nEVALUATION CRITERIA:\n1. Practice area match — does the matter fall within a served area?\n2. Jurisdiction — is the matter in a served state/jurisdiction? (flag if unclear)\n3. Case cognizability — is this a genuine legal matter vs. a general question or hypothetical?\n4. Statute of limitations urgency — any indicators of imminent deadlines?\n5. Information completeness — enough detail to warrant scheduling a consultation?\n\nRespond ONLY with a valid JSON object. No prose outside the JSON.\n\n{\n  \"score\": <integer 0-100>,\n  \"practiceAreaMatch\": <boolean>,\n  \"jurisdictionMatch\": <boolean>,\n  \"recommendConsultation\": <boolean>,\n  \"urgencyLevel\": \"low\" | \"normal\" | \"high\" | \"urgent\",\n  \"practiceAreaDetected\": \"<string>\",\n  \"disqualificationReason\": \"<string or empty>\",\n  \"followUpQuestions\": [\"<question1>\", \"<question2>\"],\n  \"confidentialityNotice\": \"This communication is for intake screening only. No attorney-client relationship is established until a signed engagement agreement is in place.\"\n}`;\n\nreturn [{\n  json: {\n    lead,\n    qualificationRequest: {\n      model: 'claude-sonnet-5-5',\n      max_tokens: 1024,\n      system: systemPrompt,\n      messages: [{\n        role: 'user',\n        content: `Qualify this intake lead:\\n\\nName: ${lead.fullName}\\nCase Type: ${lead.caseType || 'Not specified'}\\nJurisdiction: ${lead.jurisdiction || 'Not specified'}\\nUrgency: ${lead.urgency}\\nSource: ${lead.source}\\nDescription: ${lead.description || 'None provided'}\\nAdverse Parties: ${lead.adverseParties || 'None specified'}\\nContact: ${lead.email || 'No email'} | ${lead.phone || 'No phone'}`\n      }]\n    }\n  }\n}];"
+      }
+    },
+    {
+      "id": "550e8400-0012",
+      "name": "Claude AI Qualification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [940, 640],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key",          "value": "={{ $credentials.password }}" },
+            { "name": "anthropic-version",   "value": "2023-06-01" },
+            { "name": "content-type",        "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.qualificationRequest) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cred-anthropic",
+          "name": "Anthropic API Key"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0013",
+      "name": "Parse Qualification Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1220, 640],
+      "parameters": {
+        "jsCode": "const lead = $('Validate & Build AI Request').first().json.lead;\nconst aiResponse = $input.first().json;\n\nlet q;\ntry {\n  const text = aiResponse.content?.[0]?.text || '{}';\n  const match = text.match(/\\{[\\s\\S]*\\}/);\n  q = JSON.parse(match ? match[0] : text);\n} catch(e) {\n  q = {\n    score: 50,\n    practiceAreaMatch: false,\n    jurisdictionMatch: false,\n    recommendConsultation: false,\n    urgencyLevel: 'normal',\n    practiceAreaDetected: lead.caseType || 'unknown',\n    disqualificationReason: '',\n    followUpQuestions: [],\n    confidentialityNotice: 'This communication is for intake screening only. No attorney-client relationship is established until a signed engagement agreement is in place.'\n  };\n}\n\nreturn [{\n  json: {\n    ...lead,\n    qualification: {\n      score:                  q.score ?? 50,\n      practiceAreaMatch:      q.practiceAreaMatch ?? false,\n      jurisdictionMatch:      q.jurisdictionMatch ?? false,\n      recommendConsultation:  q.recommendConsultation ?? false,\n      urgencyLevel:           q.urgencyLevel ?? 'normal',\n      practiceAreaDetected:   q.practiceAreaDetected || lead.caseType || 'General',\n      disqualificationReason: q.disqualificationReason || '',\n      followUpQuestions:      q.followUpQuestions || [],\n      confidentialityNotice:  q.confidentialityNotice || 'This communication is for intake screening only. No attorney-client relationship is established until a signed engagement agreement is in place.'\n    },\n    qualifiedAt: new Date().toISOString()\n  }\n}];"
+      }
+    },
+    {
+      "id": "550e8400-0014",
+      "name": "Route by Score",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1500, 640],
+      "parameters": {
+        "mode": "rules",
+        "options": {},
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "rule-high",
+                    "leftValue": "={{ $json.qualification.score }}",
+                    "rightValue": 70,
+                    "operator": { "type": "number", "operation": "gte" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Qualified"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "rule-med-low",
+                    "leftValue": "={{ $json.qualification.score }}",
+                    "rightValue": 40,
+                    "operator": { "type": "number", "operation": "gte" }
+                  },
+                  {
+                    "id": "rule-med-high",
+                    "leftValue": "={{ $json.qualification.score }}",
+                    "rightValue": 70,
+                    "operator": { "type": "number", "operation": "lt" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Nurture"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "rule-low",
+                    "leftValue": "={{ $json.qualification.score }}",
+                    "rightValue": 40,
+                    "operator": { "type": "number", "operation": "lt" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Disqualified"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "550e8400-0015",
+      "name": "Send Disqualification Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 980],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.sendgrid.com/v3/mail/send",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{ $credentials.password }}" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  personalizations: [{ to: [{ email: $json.email, name: $json.fullName }] }],\n  from: { email: $vars.FIRM_EMAIL || 'intake@lawfirm.com', name: $vars.FIRM_NAME || 'Law Firm' },\n  subject: 'Thank you for contacting us',\n  content: [{\n    type: 'text/html',\n    value: '<p>Dear ' + ($json.firstName || $json.fullName) + ',</p><p>Thank you for reaching out. After reviewing your inquiry, we have determined that your matter may be better handled by an attorney specializing in ' + ($json.qualification.practiceAreaDetected || 'this specific area') + '.</p>' + ($json.qualification.disqualificationReason ? '<p>' + $json.qualification.disqualificationReason + '</p>' : '') + '<p>We recommend consulting with a licensed attorney in your jurisdiction. State bar referral services can connect you with qualified counsel.</p><p><em>CONFIDENTIALITY NOTICE: ' + $json.qualification.confidentialityNotice + '</em></p><p>Best regards,<br>' + ($vars.FIRM_NAME || 'The Firm') + '</p>'\n  }]\n}) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cred-sendgrid",
+          "name": "SendGrid API Key"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0016",
+      "name": "Add to Nurture - Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [1780, 760],
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "={{ $vars.AIRTABLE_BASE_ID }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Nurture Prospects",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead ID":        "={{ $json.leadId }}",
+            "Full Name":      "={{ $json.fullName }}",
+            "Email":          "={{ $json.email }}",
+            "Phone":          "={{ $json.phone }}",
+            "Case Type":      "={{ $json.qualification.practiceAreaDetected }}",
+            "Score":          "={{ $json.qualification.score }}",
+            "Source":         "={{ $json.source }}",
+            "Intake Date":    "={{ $json.intakeTimestamp }}",
+            "Status":         "Nurture - Active",
+            "Follow-Up Stage":"1",
+            "Next Follow-Up": "={{ new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() }}"
+          }
+        }
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cred-airtable",
+          "name": "Airtable API"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0017",
+      "name": "Conflict Check - Clio Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 420],
+      "parameters": {
+        "method": "GET",
+        "url": "https://app.clio.com/api/v4/contacts.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "query",  "value": "={{ $json.fullName }}" },
+            { "name": "fields", "value": "id,name,type,relationships" },
+            { "name": "limit",  "value": "100" }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{ $credentials.password }}" },
+            { "name": "Accept",        "value": "application/json" }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cred-clio",
+          "name": "Clio API Token"
+        }
+      },
+      "notes": "Queries all contacts in Clio to check new client and adverse party names against the full client database"
+    },
+    {
+      "id": "550e8400-0018",
+      "name": "Fuzzy Name Match",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2060, 420],
+      "parameters": {
+        "jsCode": "const qualifiedLead = $('Parse Qualification Score').first().json;\nconst clioContacts = $input.first().json.data || [];\n\nfunction jaro(a, b) {\n  if (!a || !b) return 0;\n  a = a.toLowerCase().trim(); b = b.toLowerCase().trim();\n  if (a === b) return 1;\n  const range = Math.floor(Math.max(a.length, b.length) / 2) - 1;\n  const aMatch = new Array(a.length).fill(false);\n  const bMatch = new Array(b.length).fill(false);\n  let matches = 0, transpositions = 0;\n  for (let i = 0; i < a.length; i++) {\n    const lo = Math.max(0, i - range);\n    const hi = Math.min(i + range + 1, b.length);\n    for (let j = lo; j < hi; j++) {\n      if (bMatch[j] || a[i] !== b[j]) continue;\n      aMatch[i] = bMatch[j] = true; matches++; break;\n    }\n  }\n  if (!matches) return 0;\n  let k = 0;\n  for (let i = 0; i < a.length; i++) {\n    if (!aMatch[i]) continue;\n    while (!bMatch[k]) k++;\n    if (a[i] !== b[k++]) transpositions++;\n  }\n  return (matches / a.length + matches / b.length + (matches - transpositions / 2) / matches) / 3;\n}\n\nconst newClientName = qualifiedLead.fullName || '';\nconst adverseNames = (qualifiedLead.adverseParties || '').split(',').map(s => s.trim()).filter(Boolean);\nconst conflicts = [];\n\nfor (const contact of clioContacts) {\n  const cName = contact.name || '';\n  const clientSim = jaro(newClientName, cName);\n  if (clientSim >= 0.88) {\n    conflicts.push({\n      type: 'prospective_client_matches_existing_contact',\n      prospectiveName: newClientName,\n      existingName: cName,\n      similarity: Math.round(clientSim * 100),\n      clioContactId: contact.id,\n      contactType: contact.type\n    });\n  }\n  for (const adverse of adverseNames) {\n    const advSim = jaro(adverse, cName);\n    if (advSim >= 0.88) {\n      conflicts.push({\n        type: 'adverse_party_matches_existing_client',\n        adversePartyName: adverse,\n        existingName: cName,\n        similarity: Math.round(advSim * 100),\n        clioContactId: contact.id,\n        contactType: contact.type\n      });\n    }\n  }\n}\n\nreturn [{\n  json: {\n    ...qualifiedLead,\n    conflictCheck: {\n      performedAt:           new Date().toISOString(),\n      totalContactsChecked:  clioContacts.length,\n      conflicts,\n      hasConflicts:          conflicts.length > 0,\n      status:                conflicts.length > 0 ? 'CONFLICT_FLAGGED' : 'CLEAR',\n      requiresAttorneyReview: conflicts.length > 0\n    }\n  }\n}];"
+      }
+    },
+    {
+      "id": "550e8400-0019",
+      "name": "Conflict Detected?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2340, 420],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "cond-conflict",
+              "leftValue":  "={{ $json.conflictCheck.hasConflicts }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equal" }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "550e8400-0020",
+      "name": "Conflict Alert - Email Attorney",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2620, 240],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.sendgrid.com/v3/mail/send",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{ $credentials.password }}" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  personalizations: [{ to: [{ email: $vars.ATTORNEY_REVIEW_EMAIL || 'attorney@lawfirm.com' }] }],\n  from: { email: $vars.FIRM_EMAIL || 'intake@lawfirm.com', name: 'Intake System' },\n  subject: '[ACTION REQUIRED] Conflict Check Flag — ' + $json.fullName + ' | ' + $json.leadId,\n  content: [{\n    type: 'text/html',\n    value: '<h2>Conflict Check — Attorney Review Required</h2>' +\n      '<table><tr><td><strong>Lead ID:</strong></td><td>' + $json.leadId + '</td></tr>' +\n      '<tr><td><strong>Prospect:</strong></td><td>' + $json.fullName + '</td></tr>' +\n      '<tr><td><strong>Email:</strong></td><td>' + $json.email + '</td></tr>' +\n      '<tr><td><strong>Phone:</strong></td><td>' + $json.phone + '</td></tr>' +\n      '<tr><td><strong>Practice Area:</strong></td><td>' + $json.qualification.practiceAreaDetected + '</td></tr>' +\n      '<tr><td><strong>Score:</strong></td><td>' + $json.qualification.score + '/100</td></tr>' +\n      '<tr><td><strong>Source:</strong></td><td>' + $json.source + '</td></tr></table>' +\n      '<h3>Conflict Details</h3><pre>' + JSON.stringify($json.conflictCheck.conflicts, null, 2) + '</pre>' +\n      '<hr><p><strong>IMPORTANT:</strong> The AI system has paused this lead pending your review. ' +\n      'Please determine: (1) whether a conflict of interest exists, (2) whether a waiver is appropriate, ' +\n      '(3) whether the firm may represent this prospective client. ' +\n      'Update the lead status in the intake portal to proceed or decline.</p>' +\n      '<p><em>AI systems do not clear conflicts — human attorney review is required per firm policy.</em></p>'\n  }]\n}) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cred-sendgrid",
+          "name": "SendGrid API Key"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0021",
+      "name": "Log Conflict in Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [2900, 240],
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "={{ $vars.AIRTABLE_BASE_ID }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Conflict Flags",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead ID":          "={{ $json.leadId }}",
+            "Prospect Name":    "={{ $json.fullName }}",
+            "Email":            "={{ $json.email }}",
+            "Practice Area":    "={{ $json.qualification.practiceAreaDetected }}",
+            "Conflict Details": "={{ JSON.stringify($json.conflictCheck.conflicts) }}",
+            "Contacts Checked": "={{ $json.conflictCheck.totalContactsChecked }}",
+            "Status":           "Pending Attorney Review",
+            "Flagged At":       "={{ $json.conflictCheck.performedAt }}"
+          }
+        }
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cred-airtable",
+          "name": "Airtable API"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0022",
+      "name": "Generate Engagement Letter - PandaDoc",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2620, 600],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pandadoc.com/public/v1/documents",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "API-Key {{ $credentials.password }}" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  name: 'Engagement Letter — ' + $json.fullName + ' — ' + new Date().toLocaleDateString('en-US'),\n  template_uuid: $vars['PANDADOC_TEMPLATE_' + ($json.qualification.practiceAreaDetected || 'GENERAL').toUpperCase().replace(/ /g, '_')] || $vars.PANDADOC_DEFAULT_TEMPLATE,\n  recipients: [\n    {\n      email:      $json.email,\n      first_name: $json.firstName,\n      last_name:  $json.lastName,\n      role:       'Client'\n    }\n  ],\n  fields: {\n    client_name:       { value: $json.fullName },\n    client_email:      { value: $json.email },\n    client_phone:      { value: $json.phone },\n    practice_area:     { value: $json.qualification.practiceAreaDetected },\n    matter_description:{ value: $json.caseType || $json.qualification.practiceAreaDetected },\n    engagement_date:   { value: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) },\n    firm_name:         { value: $vars.FIRM_NAME || 'Law Firm' },\n    lead_id:           { value: $json.leadId }\n  },\n  metadata: {\n    leadId:       $json.leadId,\n    source:       $json.source,\n    practiceArea: $json.qualification.practiceAreaDetected,\n    intakeDate:   $json.intakeTimestamp\n  },\n  tags: ['intake-automation', $json.source, $json.qualification.practiceAreaDetected]\n}) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cred-pandadoc",
+          "name": "PandaDoc API Key"
+        }
+      },
+      "notes": "Uses firm-approved templates only. Template ID resolved from PANDADOC_TEMPLATE_{PRACTICE_AREA} env var, with PANDADOC_DEFAULT_TEMPLATE as fallback."
+    },
+    {
+      "id": "550e8400-0023",
+      "name": "Send Engagement Letter for Signature",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2900, 600],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.pandadoc.com/public/v1/documents/{{ $json.id }}/send",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "API-Key {{ $credentials.password }}" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  message: 'Dear ' + $('Parse Qualification Score').first().json.firstName + ',\\n\\nThank you for choosing ' + ($vars.FIRM_NAME || 'our firm') + '. Please review and sign the attached engagement letter at your earliest convenience.\\n\\nIMPORTANT: No attorney-client relationship is established until this agreement is fully executed by both parties.\\n\\nIf you have questions, please contact our office at ' + ($vars.FIRM_PHONE || '') + '.\\n\\nCONFIDENTIALITY NOTICE: This communication and any attachments are confidential and may be privileged. If you are not the intended recipient, please notify us immediately.',\n  subject: 'Engagement Letter — ' + ($vars.FIRM_NAME || 'Law Firm') + ' — Please Sign',\n  silent: false\n}) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cred-pandadoc",
+          "name": "PandaDoc API Key"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0024",
+      "name": "Signature Complete Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [3180, 600],
+      "webhookId": "wh-signature-complete",
+      "parameters": {
+        "path": "pandadoc-signed",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "notes": "Configure this webhook URL in PandaDoc: Settings > Integrations > Webhooks. Event: document_state_changed (status: document.completed). The leadId is in event.data.metadata.leadId"
+    },
+    {
+      "id": "550e8400-0025",
+      "name": "Lookup Lead by ID",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [3460, 600],
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "={{ $vars.AIRTABLE_BASE_ID }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Nurture Prospects",
+          "mode": "name"
+        },
+        "filterByFormula": "={Lead ID}='{{ $json.data?.metadata?.leadId || $json.metadata?.leadId }}'",
+        "options": {
+          "fields": ["Lead ID","Full Name","Email","Phone","Case Type","Score","Source","Intake Date"]
+        }
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cred-airtable",
+          "name": "Airtable API"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0026",
+      "name": "Create Clio Matter",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3740, 480],
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.clio.com/api/v4/matters.json",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{ $credentials.password }}" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  data: {\n    client: {\n      name: $json.fields['Full Name'],\n      email_addresses: [{ name: 'Work', address: $json.fields['Email'], default_email: true }],\n      phone_numbers: $json.fields['Phone'] ? [{ name: 'Work', number: $json.fields['Phone'], default_number: true }] : []\n    },\n    description: ($json.fields['Case Type'] || 'General') + ' matter — Intake via ' + $json.fields['Source'],\n    practice_area: { name: $json.fields['Case Type'] || 'General' },\n    status: 'open',\n    open_date: new Date().toISOString().split('T')[0],\n    originating_attorney: { id: $vars.DEFAULT_ATTORNEY_CLIO_ID || null },\n    custom_field_values: [\n      { field: { name: 'Lead ID' },         value: $json.fields['Lead ID'] },\n      { field: { name: 'Intake Source' },    value: $json.fields['Source'] },\n      { field: { name: 'Qualification Score' }, value: String($json.fields['Score'] || '') }\n    ]\n  }\n}) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cred-clio",
+          "name": "Clio API Token"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0027",
+      "name": "Sync to Airtable - Active Client",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [3740, 700],
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "={{ $vars.AIRTABLE_BASE_ID }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Active Clients",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead ID":        "={{ $('Lookup Lead by ID').first().json.fields['Lead ID'] }}",
+            "Full Name":      "={{ $('Lookup Lead by ID').first().json.fields['Full Name'] }}",
+            "Email":          "={{ $('Lookup Lead by ID').first().json.fields['Email'] }}",
+            "Phone":          "={{ $('Lookup Lead by ID').first().json.fields['Phone'] }}",
+            "Practice Area":  "={{ $('Lookup Lead by ID').first().json.fields['Case Type'] }}",
+            "Source":         "={{ $('Lookup Lead by ID').first().json.fields['Source'] }}",
+            "Clio Matter ID": "={{ $('Create Clio Matter').first().json.data?.id || '' }}",
+            "Status":         "Active Client",
+            "Engaged At":     "={{ new Date().toISOString() }}",
+            "Intake Date":    "={{ $('Lookup Lead by ID').first().json.fields['Intake Date'] }}"
+          }
+        }
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cred-airtable",
+          "name": "Airtable API"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0028",
+      "name": "Trigger Onboarding Workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [4020, 600],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.ONBOARDING_WEBHOOK_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  trigger: 'new_client_onboarding',\n  leadId:       $('Lookup Lead by ID').first().json.fields['Lead ID'],\n  clientName:   $('Lookup Lead by ID').first().json.fields['Full Name'],\n  clientEmail:  $('Lookup Lead by ID').first().json.fields['Email'],\n  clientPhone:  $('Lookup Lead by ID').first().json.fields['Phone'],\n  practiceArea: $('Lookup Lead by ID').first().json.fields['Case Type'],\n  clioMatterId: $('Create Clio Matter').first().json.data?.id,\n  intakeSource: $('Lookup Lead by ID').first().json.fields['Source'],\n  assignedAttorney: $vars.DEFAULT_ATTORNEY,\n  timestamp: new Date().toISOString(),\n  tasks: [\n    'Schedule initial consultation call',\n    'Send client welcome packet',\n    'Set up client portal access in Clio',\n    'Calendar 3-day follow-up check-in'\n  ]\n}) }}",
+        "options": {}
+      },
+      "notes": "Set ONBOARDING_WEBHOOK_URL in n8n environment variables. Can point to another n8n workflow, Make.com scenario, or your practice management onboarding endpoint."
+    },
+    {
+      "id": "550e8400-0029",
+      "name": "Wait 2hrs Before Day-1 SMS",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2060, 760],
+      "parameters": {
+        "resume": "timeInterval",
+        "unit": "hours",
+        "amount": 2
+      }
+    },
+    {
+      "id": "550e8400-0030",
+      "name": "Day 1 SMS - Twilio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2340, 760],
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $vars.TWILIO_ACCOUNT_SID }}/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            { "name": "To",   "value": "={{ $json.phone }}" },
+            { "name": "From", "value": "={{ $vars.TWILIO_FROM_NUMBER }}" },
+            { "name": "Body", "value": "=Hi {{ $json.firstName }}, this is the intake team at {{ $vars.FIRM_NAME || 'our law firm' }}. We received your inquiry and want to help. Reply YES to schedule a free consultation or call {{ $vars.FIRM_PHONE }}. CONFIDENTIALITY NOTICE: This message is from a law firm. Reply STOP to opt out." }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "cred-twilio",
+          "name": "Twilio Account SID + Auth Token"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0031",
+      "name": "Wait 2 Days - Day 3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2620, 760],
+      "parameters": {
+        "resume": "timeInterval",
+        "unit": "days",
+        "amount": 2
+      }
+    },
+    {
+      "id": "550e8400-0032",
+      "name": "Day 3 Email - SendGrid",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2900, 760],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.sendgrid.com/v3/mail/send",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{ $credentials.password }}" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  personalizations: [{ to: [{ email: $json.email, name: $json.fullName }] }],\n  from: { email: $vars.FIRM_EMAIL || 'intake@lawfirm.com', name: $vars.FIRM_NAME || 'Law Firm' },\n  subject: 'Following up on your ' + ($json.qualification.practiceAreaDetected || 'legal') + ' inquiry',\n  content: [{\n    type: 'text/html',\n    value: '<p>Dear ' + ($json.firstName || $json.fullName) + ',</p>' +\n      '<p>We wanted to follow up on your recent inquiry regarding ' + ($json.qualification.practiceAreaDetected || 'your legal matter') + '.</p>' +\n      '<p>Our team can schedule a consultation at your convenience — evenings and weekends available.</p>' +\n      '<p><strong>Important:</strong> Many legal matters have strict statutes of limitations. Acting promptly protects your rights.</p>' +\n      '<p>Reply to this email or call ' + ($vars.FIRM_PHONE || 'our office') + ' to schedule.</p>' +\n      '<p><em>CONFIDENTIALITY NOTICE: This communication is from a law firm. ' + $json.qualification.confidentialityNotice + ' To unsubscribe reply UNSUBSCRIBE.</em></p>' +\n      '<p>Best regards,<br>' + ($vars.FIRM_NAME || 'The Intake Team') + '</p>'\n  }]\n}) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cred-sendgrid",
+          "name": "SendGrid API Key"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0033",
+      "name": "Wait 4 Days - Day 7",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [3180, 760],
+      "parameters": {
+        "resume": "timeInterval",
+        "unit": "days",
+        "amount": 4
+      }
+    },
+    {
+      "id": "550e8400-0034",
+      "name": "Day 7 Voice Callback - Retell AI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3460, 760],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.retellai.com/v2/create-phone-call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{ $credentials.password }}" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  from_number: $vars.RETELL_FROM_NUMBER || $vars.FIRM_PHONE,\n  to_number:   $json.phone,\n  override_agent_id: $vars.RETELL_FOLLOWUP_AGENT_ID,\n  retell_llm_dynamic_variables: {\n    client_first_name: $json.firstName,\n    firm_name:         $vars.FIRM_NAME || 'our law firm',\n    practice_area:     $json.qualification.practiceAreaDetected || 'your legal matter',\n    firm_phone:        $vars.FIRM_PHONE || 'our office',\n    lead_id:           $json.leadId,\n    disclosure:        'I am an automated intake assistant for ' + ($vars.FIRM_NAME || 'this law firm') + '. I will collect some information about your situation and connect you with an attorney. I am not able to provide legal advice.'\n  },\n  metadata: {\n    leadId:          $json.leadId,\n    followUpStage:   'day_7_voice',\n    source:          $json.source\n  }\n}) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cred-retell",
+          "name": "Retell AI API Key"
+        }
+      },
+      "notes": "GUARDRAIL: Retell agent script must open with the disclosure in retell_llm_dynamic_variables.disclosure. Agent must NOT provide legal advice or case assessments."
+    },
+    {
+      "id": "550e8400-0035",
+      "name": "Wait 7 Days - Day 14",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [3740, 760],
+      "parameters": {
+        "resume": "timeInterval",
+        "unit": "days",
+        "amount": 7
+      }
+    },
+    {
+      "id": "550e8400-0036",
+      "name": "Day 14 Final Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [4020, 760],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.sendgrid.com/v3/mail/send",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{ $credentials.password }}" },
+            { "name": "Content-Type",  "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  personalizations: [{ to: [{ email: $json.email, name: $json.fullName }] }],\n  from: { email: $vars.FIRM_EMAIL || 'intake@lawfirm.com', name: $vars.FIRM_NAME || 'Law Firm' },\n  subject: 'We are still here if you need legal help',\n  content: [{\n    type: 'text/html',\n    value: '<p>Dear ' + ($json.firstName || $json.fullName) + ',</p>' +\n      '<p>This is our final follow-up regarding your inquiry about ' + ($json.qualification.practiceAreaDetected || 'your legal matter') + '.</p>' +\n      '<p>We understand you may have resolved your situation or found other representation. If you need legal assistance in the future, we are here.</p>' +\n      '<p><strong>Please note:</strong> Legal claims often have strict filing deadlines. If your matter involves a potential claim, please consult with an attorney promptly to preserve your rights.</p>' +\n      '<p>Reach us at ' + ($vars.FIRM_PHONE || 'our office') + ' or ' + ($vars.FIRM_EMAIL || 'intake@lawfirm.com') + '.</p>' +\n      '<p><em>CONFIDENTIALITY NOTICE: ' + $json.qualification.confidentialityNotice + ' To unsubscribe from future communications, reply UNSUBSCRIBE.</em></p>' +\n      '<p>Warm regards,<br>' + ($vars.FIRM_NAME || 'The Firm') + '</p>'\n  }]\n}) }}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cred-sendgrid",
+          "name": "SendGrid API Key"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0037",
+      "name": "Archive - Mark Lead Cold",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [4300, 760],
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "={{ $vars.AIRTABLE_BASE_ID }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Nurture Prospects",
+          "mode": "name"
+        },
+        "filterByFormula": "={Lead ID}='{{ $json.leadId }}'",
+        "options": {}
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cred-airtable",
+          "name": "Airtable API"
+        }
+      }
+    },
+    {
+      "id": "550e8400-0038",
+      "name": "Update Lead Status Cold",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [4580, 760],
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "={{ $vars.AIRTABLE_BASE_ID }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Nurture Prospects",
+          "mode": "name"
+        },
+        "id": "={{ $json.id }}",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status":          "Cold — No Response",
+            "Follow-Up Stage": "Complete",
+            "Archived At":     "={{ new Date().toISOString() }}"
+          }
+        }
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "cred-airtable",
+          "name": "Airtable API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Web Form Intake":     { "main": [[{ "node": "Normalize Web Form",   "type": "main", "index": 0 }]] },
+    "Voice AI Intake":     { "main": [[{ "node": "Normalize Voice",       "type": "main", "index": 0 }]] },
+    "Chat Widget Intake":  { "main": [[{ "node": "Normalize Chat",        "type": "main", "index": 0 }]] },
+    "Email Intake":        { "main": [[{ "node": "Normalize Email",       "type": "main", "index": 0 }]] },
+    "Referral Intake":     { "main": [[{ "node": "Normalize Referral",    "type": "main", "index": 0 }]] },
+    "Normalize Web Form":  { "main": [[{ "node": "Validate & Build AI Request", "type": "main", "index": 0 }]] },
+    "Normalize Voice":     { "main": [[{ "node": "Validate & Build AI Request", "type": "main", "index": 0 }]] },
+    "Normalize Chat":      { "main": [[{ "node": "Validate & Build AI Request", "type": "main", "index": 0 }]] },
+    "Normalize Email":     { "main": [[{ "node": "Validate & Build AI Request", "type": "main", "index": 0 }]] },
+    "Normalize Referral":  { "main": [[{ "node": "Validate & Build AI Request", "type": "main", "index": 0 }]] },
+    "Validate & Build AI Request": { "main": [[{ "node": "Claude AI Qualification",   "type": "main", "index": 0 }]] },
+    "Claude AI Qualification":     { "main": [[{ "node": "Parse Qualification Score", "type": "main", "index": 0 }]] },
+    "Parse Qualification Score":   { "main": [[{ "node": "Route by Score",             "type": "main", "index": 0 }]] },
+    "Route by Score": {
+      "main": [
+        [{ "node": "Conflict Check - Clio Search", "type": "main", "index": 0 }],
+        [{ "node": "Add to Nurture - Airtable",    "type": "main", "index": 0 }],
+        [{ "node": "Send Disqualification Email",  "type": "main", "index": 0 }]
+      ]
+    },
+    "Conflict Check - Clio Search": { "main": [[{ "node": "Fuzzy Name Match",   "type": "main", "index": 0 }]] },
+    "Fuzzy Name Match":              { "main": [[{ "node": "Conflict Detected?", "type": "main", "index": 0 }]] },
+    "Conflict Detected?": {
+      "main": [
+        [
+          { "node": "Conflict Alert - Email Attorney", "type": "main", "index": 0 },
+          { "node": "Log Conflict in Airtable",        "type": "main", "index": 0 }
+        ],
+        [{ "node": "Generate Engagement Letter - PandaDoc", "type": "main", "index": 0 }]
+      ]
+    },
+    "Generate Engagement Letter - PandaDoc": { "main": [[{ "node": "Send Engagement Letter for Signature", "type": "main", "index": 0 }]] },
+    "Signature Complete Webhook":             { "main": [[{ "node": "Lookup Lead by ID",                   "type": "main", "index": 0 }]] },
+    "Lookup Lead by ID": {
+      "main": [[
+        { "node": "Create Clio Matter",              "type": "main", "index": 0 },
+        { "node": "Sync to Airtable - Active Client","type": "main", "index": 0 }
+      ]]
+    },
+    "Create Clio Matter":              { "main": [[{ "node": "Trigger Onboarding Workflow", "type": "main", "index": 0 }]] },
+    "Add to Nurture - Airtable":       { "main": [[{ "node": "Wait 2hrs Before Day-1 SMS",  "type": "main", "index": 0 }]] },
+    "Wait 2hrs Before Day-1 SMS":      { "main": [[{ "node": "Day 1 SMS - Twilio",           "type": "main", "index": 0 }]] },
+    "Day 1 SMS - Twilio":              { "main": [[{ "node": "Wait 2 Days - Day 3",           "type": "main", "index": 0 }]] },
+    "Wait 2 Days - Day 3":             { "main": [[{ "node": "Day 3 Email - SendGrid",        "type": "main", "index": 0 }]] },
+    "Day 3 Email - SendGrid":          { "main": [[{ "node": "Wait 4 Days - Day 7",           "type": "main", "index": 0 }]] },
+    "Wait 4 Days - Day 7":             { "main": [[{ "node": "Day 7 Voice Callback - Retell AI", "type": "main", "index": 0 }]] },
+    "Day 7 Voice Callback - Retell AI":{ "main": [[{ "node": "Wait 7 Days - Day 14",          "type": "main", "index": 0 }]] },
+    "Wait 7 Days - Day 14":            { "main": [[{ "node": "Day 14 Final Email",             "type": "main", "index": 0 }]] },
+    "Day 14 Final Email":              { "main": [[{ "node": "Archive - Mark Lead Cold",       "type": "main", "index": 0 }]] },
+    "Archive - Mark Lead Cold":        { "main": [[{ "node": "Update Lead Status Cold",        "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "versionId": "a3b4c5d6-e7f8-9012-a3b4-c5d6e7f89012",
+  "id": "law-firm-lead-gen-v1",
+  "tags": [
+    { "name": "law-firm" },
+    { "name": "lead-generation" },
+    { "name": "intake-automation" },
+    { "name": "ai-qualification" }
+  ],
+  "_meta": {
+    "description": "Law Firm Lead Generation & Intake Automation",
+    "version": "1.0.0",
+    "layers": {
+      "1_intake": "5 channels: web form, voice AI (Retell/Vapi), chat widget, email (IMAP), referral",
+      "2_qualification": "Claude claude-sonnet-5-5 via Anthropic API — scores 0-100, routes to Qualified/Nurture/Disqualified",
+      "3_conflict_check": "Clio API + Jaro similarity fuzzy match — flags conflicts for mandatory attorney review",
+      "4_follow_up": "14-day sequence: SMS (Day 1) → Email (Day 3) → Voice callback (Day 7) → Final email (Day 14)",
+      "5_engagement_letter": "PandaDoc template-based letter, e-signature, completion webhook",
+      "6_pms_crm_sync": "Clio matter creation, Airtable CRM record, attorney assignment, onboarding trigger"
+    },
+    "guardrails": [
+      "AI never provides legal advice or case evaluations",
+      "All voice calls open with mandatory AI disclosure script",
+      "Conflict checks always flagged for attorney review — AI does not clear conflicts",
+      "Engagement letters use firm-approved PandaDoc templates only",
+      "Confidentiality notice included in every outbound communication",
+      "Unsubscribe mechanism in all follow-up emails per CAN-SPAM and state bar rules"
+    ],
+    "required_env_vars": [
+      "AIRTABLE_BASE_ID",
+      "FIRM_NAME",
+      "FIRM_EMAIL",
+      "FIRM_PHONE",
+      "ATTORNEY_REVIEW_EMAIL",
+      "DEFAULT_ATTORNEY",
+      "DEFAULT_ATTORNEY_CLIO_ID",
+      "TWILIO_ACCOUNT_SID",
+      "TWILIO_FROM_NUMBER",
+      "RETELL_FROM_NUMBER",
+      "RETELL_FOLLOWUP_AGENT_ID",
+      "PANDADOC_DEFAULT_TEMPLATE",
+      "ONBOARDING_WEBHOOK_URL"
+    ],
+    "required_credentials": [
+      "Anthropic API Key (httpHeaderAuth)",
+      "Clio API Token (httpHeaderAuth)",
+      "SendGrid API Key (httpHeaderAuth)",
+      "PandaDoc API Key (httpHeaderAuth)",
+      "Retell AI API Key (httpHeaderAuth)",
+      "Twilio Account SID + Auth Token (httpBasicAuth)",
+      "Airtable API (airtableTokenApi)",
+      "Law Firm Intake Email IMAP (imap)"
+    ]
+  }
+}
