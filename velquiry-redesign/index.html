@@ -316,6 +316,37 @@ body{background:#f1efea}
   .flash{position:static;justify-self:start;margin-bottom:8px;transform:rotate(-2deg);font-size:20px}
 }
 
+/* ---------- poster + anime layer: propaganda-poster sunbursts, stars, slogan banners; manga speed lines and threat-rank alerts ---------- */
+.star{width:1em;height:1em;fill:var(--gold);display:inline-block;vertical-align:-.12em}
+.top{background:repeating-conic-gradient(from -90deg at 50% 135%,#a9201c 0 4deg,#981c19 4deg 8deg)}
+.poster{position:relative;overflow:hidden;color:#f3e9d8;background:repeating-conic-gradient(from 0deg at 28% 62%,#a9201c 0 7.5deg,#8c1916 7.5deg 15deg)}
+.poster::before{content:"";position:absolute;left:28%;top:62%;width:340px;height:340px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#e7b04a 0 38%,#d69a2c 39% 52%,rgba(214,154,44,0) 53%);pointer-events:none}
+.poster .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:28px 44px;align-items:center;padding-block:48px}
+.poster figure{margin:0;border:6px solid #11100e;box-shadow:12px 12px 0 #11100e;transform:rotate(-2deg);background:#11100e;max-width:100%}
+.poster figure img{display:block;width:100%;height:auto;aspect-ratio:2/1;object-fit:cover}
+.poster .issued{font-family:var(--f-type);font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#11100e;background:var(--gold);display:inline-block;padding:3px 10px}
+.poster h2{font-size:clamp(56px,8.4vw,124px);line-height:.84;margin:12px 0 14px;color:#f3e9d8;text-shadow:5px 5px 0 #11100e}
+.poster h2 .g{color:var(--gold)}
+.poster .banner{display:inline-flex;align-items:center;gap:12px;background:#11100e;color:#f3e9d8;font-family:var(--f-head);font-weight:900;font-size:clamp(24px,2.6vw,34px);text-transform:uppercase;padding:8px 18px;clip-path:polygon(0 0,100% 0,96% 50%,100% 100%,0 100%,4% 50%)}
+.poster .banner .star{font-size:.9em}
+.poster p.small{font-size:16px;margin-top:16px;max-width:44ch}
+.speed{position:relative;isolation:isolate}
+.speed::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,255,255,.10) 0 .6deg,transparent .6deg 6deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 22%,#000 70%);mask:radial-gradient(circle at 50% 50%,transparent 22%,#000 70%)}
+.final-band.speed::after{background:repeating-conic-gradient(from 0deg at 30% 40%,rgba(255,255,255,.12) 0 .5deg,transparent .5deg 5deg);-webkit-mask:radial-gradient(circle at 30% 40%,transparent 18%,#000 65%);mask:radial-gradient(circle at 30% 40%,transparent 18%,#000 65%)}
+.alert{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;background:#11100e;color:#f3e9d8;border-left:10px solid var(--red);padding:12px 16px;margin-bottom:22px;font-family:var(--f-type);font-size:14px}
+.alert b{font-family:var(--f-head);font-weight:900;font-size:22px;letter-spacing:.04em;color:#e3504a;text-transform:uppercase}
+.alert .bar{flex:1;min-width:160px;height:10px;background:#2a2522;position:relative}
+.alert .bar i{position:absolute;inset:0 18% 0 0;background:var(--red)}
+.rank{display:inline-flex;align-items:center;gap:6px}
+.rank em{font-style:normal;font-family:var(--f-head);font-weight:900;font-size:20px;line-height:1;background:#fff;color:var(--red);padding:1px 7px}
+.rank em.s{background:var(--gold);color:#11100e}
+.rogue .head{padding:6px 10px}
+@media (max-width:820px){
+  .poster .wrap{grid-template-columns:1fr}
+  .poster::before{left:50%;top:28%}
+  .poster{background:repeating-conic-gradient(from 0deg at 50% 28%,#a9201c 0 7.5deg,#8c1916 7.5deg 15deg)}
+}
+
 /* ---------- responsive ---------- */
 @media (max-width:1060px){
   .lead{grid-column:1/-1}
@@ -411,7 +442,7 @@ body{background:#f1efea}
     <section class="splash">
       <div class="fileno" aria-hidden="true">1</div>
       <div>
-        <span class="flash">FREE SCAN <b>INSIDE</b></span>
+        <span class="flash"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l3.1 6.9 7.4.7-5.6 5 1.7 7.4L12 17.7l-6.6 3.8 1.7-7.4-5.6-5 7.4-.7z"/></svg> FREE SCAN <b>INSIDE</b></span>
         <span class="kicker">Case file 001 / Digital health</span>
         <h1>How healthy is your <span class="red">digital presence?</span></h1>
         <p class="deck">Velquiry helps founders make better business decisions through evidence-led website, growth, and operating systems. <b>Let&rsquo;s find out.</b></p>
@@ -452,13 +483,22 @@ body{background:#f1efea}
         <p>Unknown is better than an invented answer.</p>
         <small>Scores use verified evidence only. Checks we couldn&rsquo;t verify are excluded, and the report says which ones.</small>
       </div>
-      <div class="slogans">
-        <div class="slogan">We audit.<br>You grow.<br>Everyone wins.</div>
-        <div class="slogan r">Human.<br>First.<br>Always.</div>
-      </div>
     </aside>
   </div>
 </main>
+
+<!-- ============ POSTER (propaganda-style slogan) ============ -->
+<section class="poster" aria-labelledby="poster-h">
+  <div class="wrap">
+    <figure><img src="img/velquiry-archive-crew.webp" width="1600" height="800" alt="Original Velquiry archive analyst, diagnostic unit and strategist" loading="lazy"></figure>
+    <div>
+      <span class="issued"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l3.1 6.9 7.4.7-5.6 5 1.7 7.4L12 17.7l-6.6 3.8 1.7-7.4-5.6-5 7.4-.7z"/></svg> Issued by the Velquiry archive crew</span>
+      <h2 id="poster-h">We audit.<br>You grow.<br><span class="g">Everyone wins.</span></h2>
+      <span class="banner"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l3.1 6.9 7.4.7-5.6 5 1.7 7.4L12 17.7l-6.6 3.8 1.7-7.4-5.6-5 7.4-.7z"/></svg> Human. First. Always. <svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l3.1 6.9 7.4.7-5.6 5 1.7 7.4L12 17.7l-6.6 3.8 1.7-7.4-5.6-5 7.4-.7z"/></svg></span>
+      <p class="small">Every report starts with evidence and ends with a decision you can act on. No invented numbers, no hand-off after the sale.</p>
+    </div>
+  </div>
+</section>
 
 <!-- ============ HOW IT WORKS: THE 7 FILES (ink) ============ -->
 <section id="how" class="band files-band" aria-labelledby="files-h">
@@ -554,9 +594,10 @@ body{background:#f1efea}
       <div><span class="kicker">Case files / Open investigations</span><h2 id="cases-h">Four characters who will sell you a fix you don&rsquo;t need</h2></div>
       <span class="sub">If one is on your payroll, ask the question at the bottom of their file.</span>
     </div>
+    <div class="alert" role="note"><b>Field alert</b><span>4 threats detected near your marketing budget</span><span class="bar" aria-hidden="true"><i></i></span><span>Threat level: high</span></div>
     <div class="rogues">
       <article class="rogue">
-        <div class="head"><span>FILE 001</span><span class="st">OPEN</span></div>
+        <div class="head"><span>FILE 001</span><span class="rank">THREAT RANK <em>B</em></span></div>
         <div class="rogue-body">
           <h3>The retainer bandit</h3>
           <dl>
@@ -567,7 +608,7 @@ body{background:#f1efea}
         </div>
       </article>
       <article class="rogue">
-        <div class="head"><span>FILE 002</span><span class="st">OPEN</span></div>
+        <div class="head"><span>FILE 002</span><span class="rank">THREAT RANK <em>C</em></span></div>
         <div class="rogue-body">
           <h3>The vanity metric peddler</h3>
           <dl>
@@ -578,7 +619,7 @@ body{background:#f1efea}
         </div>
       </article>
       <article class="rogue">
-        <div class="head"><span>FILE 003</span><span class="st">OPEN</span></div>
+        <div class="head"><span>FILE 003</span><span class="rank">THREAT RANK <em>A</em></span></div>
         <div class="rogue-body">
           <h3>The made-up-number merchant</h3>
           <dl>
@@ -589,7 +630,7 @@ body{background:#f1efea}
         </div>
       </article>
       <article class="rogue">
-        <div class="head"><span>FILE 004</span><span class="st">OPEN</span></div>
+        <div class="head"><span>FILE 004</span><span class="rank">THREAT RANK <em class="s">S</em></span></div>
         <div class="rogue-body">
           <h3>The tool pusher</h3>
           <dl>
@@ -676,11 +717,11 @@ body{background:#f1efea}
 </section>
 
 <!-- ============ FINAL CALL (ink) ============ -->
-<section class="band pad final-band" aria-labelledby="final-h">
+<section class="band pad final-band speed" aria-labelledby="final-h">
   <div class="wrap">
     <div class="final">
       <div>
-        <span class="kicker">Field / 07</span>
+        <span class="kicker"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l3.1 6.9 7.4.7-5.6 5 1.7 7.4L12 17.7l-6.6 3.8 1.7-7.4-5.6-5 7.4-.7z"/></svg> Field / 07</span>
         <h2 id="final-h">Let&rsquo;s build <span class="g">what&rsquo;s next.</span></h2>
         <p class="human">Human ideas.<br>Real impact.</p>
       </div>
