@@ -212,6 +212,63 @@ p{margin:0}
 .colophon .wordmark{font-size:34px}
 .colophon .tag3{font-family:var(--f-head);font-weight:800;font-size:16px;letter-spacing:.06em;color:var(--cream);text-transform:uppercase}
 
+
+/* ---------- red & black edition: dark sheets, red bands, gold only on the primary CTA ---------- */
+body{background:#0b0b0a}
+.top{background:#0b0b0a}
+.sheet,.sheet.cream{background:#0b0b0a;color:#e7dcc9;
+  --ink:#e7dcc9; --cream:#151311; --paper:#0b0b0a; --muted:#a99f8c; --line:#3a3128; --dot:rgba(231,220,201,.05); --red-t:#e3504a}
+.sheet.cream{background:#121110}
+.band{background:#0b0b0a}
+.band.red,.files-band{background:var(--red);color:#f3e9d8}
+.btn.gold{color:#11100e}
+.btn.red{color:#f3e9d8}
+.btn.red:hover{background:#f3e9d8;color:#11100e}
+.sheet .kicker,.sheet .story .kicker,.sheet .ad .cat,.sheet .rogue .ask b,.sheet .sec-head .kicker,.sheet .splash .kicker{color:var(--red-t)}
+.sheet .splash h1 .red,.sheet .pull span,.sheet .story .sys span,.sheet .letter .reply b,.sheet .byline b,.sheet .simplest h3{color:var(--red-t)}
+.sheet .cols p:first-child::first-letter{color:var(--red-t)}
+.sheet .fileno{background:#11100e;color:#e7dcc9;border-color:#e7dcc9}
+.photo{background:#000}
+.photo .tag{color:#e7dcc9}
+.scanbox{background:#000;color:#e7dcc9;border-color:var(--red);box-shadow:6px 6px 0 var(--red)}
+.scanbox p{color:#e7dcc9}
+.scanbox .kicker{color:var(--gold)!important}
+.scanform input{background:#e7dcc9;border-color:#e7dcc9;color:#11100e}
+.trust{border-color:var(--red)}
+.trust .kicker{color:#f3e9d8!important}
+.slogan.r{color:var(--red-t)}
+.rogue{border-color:#3a3128}
+.rogue .head{background:var(--red);color:#f3e9d8}
+.rogue .head .st{color:#11100e;background:#f3e9d8;padding:0 6px}
+.rogue .ask{border-top-color:var(--red)}
+.ad{border-color:#3a3128}
+.ad .price{color:#e7dcc9}
+.simplest{border-color:var(--red)}
+.stamp{border-color:var(--red-t);color:var(--red-t)}
+.corrections{background:var(--red);color:#f3e9d8}
+.corrections h3{color:#11100e}
+.sheet .sec-head{border-bottom-color:var(--red)}
+.sheet .stories{border-top-color:#3a3128}
+.sheet .story,.sheet .side,.sheet .rail{border-left-color:#3a3128}
+.sheet .cols,.sheet .letters,.sheet .classifieds{column-rule-color:#3a3128}
+.sheet .splash{border-bottom-color:var(--red)}
+.sheet .pull{border-color:var(--red)}
+.files-head .kicker{color:#11100e}
+.files li{border-color:rgba(243,233,216,.5);background:rgba(0,0,0,.18)!important}
+.files li:nth-child(odd){background:rgba(0,0,0,.32)!important}
+.files .n{color:#f3e9d8}
+.files .f{color:rgba(243,233,216,.75)}
+.steps li::before{color:var(--red-t,#e3504a)}
+.final-band{background:var(--red);color:#f3e9d8}
+.final-band .kicker{color:#11100e!important}
+.final-band .final h2 .g{color:#11100e}
+.final-band .human{color:#11100e}
+.final-band .final .sig,.final-band .colophon{color:rgba(243,233,216,.8)}
+.final-band .colophon{border-top-color:rgba(243,233,216,.6)}
+.final-band .colophon .wordmark{background:#11100e;padding:8px 12px}
+.final-band .btn.line{color:#f3e9d8}
+.final-band .btn.line:hover{background:#11100e;border-color:#11100e}
+
 /* ---------- responsive ---------- */
 @media (max-width:1060px){
   .lead{grid-column:1/-1}
@@ -356,7 +413,7 @@ p{margin:0}
 </main>
 
 <!-- ============ HOW IT WORKS: THE 7 FILES (ink) ============ -->
-<section id="how" class="band" aria-labelledby="files-h">
+<section id="how" class="band files-band" aria-labelledby="files-h">
   <div class="wrap">
     <div class="files-head">
       <h2 id="files-h">Inside this edition: seven files</h2>
@@ -571,11 +628,11 @@ p{margin:0}
 </section>
 
 <!-- ============ FINAL CALL (ink) ============ -->
-<section class="band pad" aria-labelledby="final-h">
+<section class="band pad final-band" aria-labelledby="final-h">
   <div class="wrap">
     <div class="final">
       <div>
-        <span class="kicker" style="color:var(--gold)">Field / 07</span>
+        <span class="kicker">Field / 07</span>
         <h2 id="final-h">Let&rsquo;s build <span class="g">what&rsquo;s next.</span></h2>
         <p class="human">Human ideas.<br>Real impact.</p>
       </div>
