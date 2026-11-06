@@ -1,0 +1,686 @@
+<title>The Velquiry Front Page</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Courier+Prime:wght@400;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,800;1,8..60,400&family=UnifrakturMaguntia&display=swap">
+<style>
+/* Layout: a red-top tabloid splash sitting on broadsheet bones — masthead with ears, 12-col front page, rules between columns, classifieds at the back. */
+:root{
+  --paper:#ECE9E1; --paper-2:#E0DCD1; --ink:#17140F; --ink-soft:#4B463E;
+  --red:#CF1A1E; --on-red:#FFFFFF; --hi:#FFE04A; --on-hi:#17140F;
+  --dot:rgba(23,20,15,.16);
+  --f-splash:"Anton","Impact","Haettenschweiler","Arial Narrow Bold",sans-serif;
+  --f-black:"UnifrakturMaguntia","Old English Text MT",Georgia,serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-type:"Courier Prime","Courier New",Courier,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#14120F; --paper-2:#1F1C17; --ink:#ECE6D9; --ink-soft:#A9A193;
+  --red:#E33A3C; --on-red:#FFFFFF; --hi:#E7C83A; --on-hi:#17140F;
+  --dot:rgba(236,230,217,.12); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#14120F; --paper-2:#1F1C17; --ink:#ECE6D9; --ink-soft:#A9A193;
+  --red:#E33A3C; --on-red:#FFFFFF; --hi:#E7C83A; --on-hi:#17140F;
+  --dot:rgba(236,230,217,.12); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sheet{max-width:1240px;margin:0 auto;padding-block:14px 48px}
+a{color:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-within{outline:3px solid var(--red);outline-offset:3px}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--f-type)}
+.kicker{font-family:var(--f-type);font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+.rule{border:0;border-top:1px solid var(--ink);margin:0}
+.rule-3{border:0;border-top:3px double var(--ink);margin:0}
+.hi{background:linear-gradient(transparent 12%,var(--hi) 12%,var(--hi) 88%,transparent 88%);color:var(--on-hi);padding:0 .12em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+/* ---------- folio + masthead ---------- */
+.folio{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 18px;font-family:var(--f-type);font-size:13px;padding-block:6px;border-bottom:1px solid var(--ink)}
+.masthead{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;padding-block:14px}
+.ear{border:1px solid var(--ink);padding:8px 10px;font-size:14px;line-height:1.35;max-width:230px}
+.ear b{display:block;font-family:var(--f-type);font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.ear.right{justify-self:end;text-align:right}
+.flag{text-align:center}
+.flag .box{display:inline-block;background:var(--red);color:var(--on-red);font-family:var(--f-splash);font-size:clamp(56px,10vw,124px);line-height:.95;letter-spacing:.01em;padding:.04em .16em .02em;transform:skew(-4deg)}
+.flag .box span{display:inline-block;transform:skew(4deg)}
+.flag .motto{font-family:var(--f-black);font-size:clamp(20px,2.4vw,28px);margin-top:6px}
+.sections{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 22px;border-block:3px double var(--ink);padding-block:7px;font-family:var(--f-type);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+.sections a{text-decoration:none}
+.sections a:hover{color:var(--red)}
+.sections .cta-link{color:var(--red)}
+
+/* ---------- ticker ---------- */
+.ticker{display:flex;align-items:stretch;margin-top:10px;border:1px solid var(--ink);overflow:hidden}
+.ticker .tag{flex:none;background:var(--ink);color:var(--paper);font-family:var(--f-splash);font-size:18px;letter-spacing:.04em;padding:6px 12px}
+.ticker .track{flex:1;min-width:0;overflow:hidden;display:flex;align-items:center}
+.ticker ul{display:flex;gap:42px;margin:0;padding:0 0 0 20px;list-style:none;white-space:nowrap;font-family:var(--f-type);font-size:14px;animation:crawl 60s linear infinite}
+.ticker li::before{content:"\25A0";color:var(--red);margin-right:10px}
+@keyframes crawl{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.ticker ul{animation:none}}
+
+/* ---------- front page ---------- */
+.front{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:0 28px;padding-top:22px}
+.splash{grid-column:1/-1;padding-bottom:18px;border-bottom:1px solid var(--ink)}
+.splash .stamp{display:inline-block;background:var(--red);color:var(--on-red);font-family:var(--f-splash);font-size:20px;letter-spacing:.06em;padding:2px 10px;transform:rotate(-2deg);margin-bottom:10px}
+.splash h1{font-family:var(--f-splash);font-weight:400;font-size:clamp(46px,8.4vw,118px);line-height:.94;letter-spacing:-.005em;text-transform:uppercase}
+.splash h1 .red{color:var(--red)}
+.splash .deck{font-family:var(--f-body);font-style:italic;font-size:clamp(20px,2.2vw,27px);line-height:1.3;margin-top:14px;max-width:46ch}
+.lead{grid-column:1/8;padding-top:18px;min-width:0}
+.byline{display:flex;flex-wrap:wrap;gap:4px 14px;font-family:var(--f-type);font-size:13px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--ink);padding-bottom:8px;margin-bottom:14px}
+.byline b{color:var(--red)}
+.cols{column-count:2;column-gap:28px;column-rule:1px solid var(--ink)}
+.cols p{margin-bottom:.8em;hyphens:auto;text-align:justify}
+.cols p:first-child::first-letter{float:left;font-family:var(--f-splash);font-size:4.3em;line-height:.82;padding:6px 8px 0 0;color:var(--red)}
+.cols .pull{break-inside:avoid;font-family:var(--f-splash);font-size:26px;line-height:1.1;text-transform:uppercase;border-block:3px solid var(--ink);padding:10px 0;margin:6px 0 14px;text-align:left}
+.cont{font-family:var(--f-type);font-size:14px;font-weight:700}
+.cont a{color:var(--red)}
+.rail{grid-column:8/-1;padding-top:18px;border-left:1px solid var(--ink);padding-left:28px;min-width:0;display:flex;flex-direction:column;gap:18px}
+.photo{border:1px solid var(--ink);background:var(--paper-2);position:relative}
+.photo svg{display:block;width:100%;height:auto}
+.photo::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(var(--dot) 1.1px,transparent 1.3px);background-size:5px 5px;mix-blend-mode:multiply}
+.caption{font-family:var(--f-type);font-size:13px;line-height:1.4;color:var(--ink-soft)}
+.caption b{color:var(--ink)}
+.coupon{border:2px dashed var(--ink);padding:18px 18px 16px;position:relative;background:var(--paper)}
+.coupon .scissors{position:absolute;top:-14px;left:16px;background:var(--paper);padding:0 6px;font-size:20px;line-height:1}
+.coupon h2{font-family:var(--f-splash);font-weight:400;font-size:34px;line-height:1;text-transform:uppercase}
+.coupon p{margin:8px 0 14px;font-size:16px}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-type);font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;padding:12px 16px;border:2px solid var(--ink);cursor:pointer}
+.btn.primary{background:var(--red);border-color:var(--red);color:var(--on-red)}
+.btn.primary:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper)}
+.fine{font-family:var(--f-type);font-size:12px;color:var(--ink-soft);margin-top:10px}
+
+/* ---------- inside index ---------- */
+.inside{margin-top:30px;border-top:3px double var(--ink);border-bottom:1px solid var(--ink)}
+.inside-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-block:8px;border-bottom:1px solid var(--ink)}
+.inside-head h2{font-family:var(--f-black);font-weight:400;font-size:30px}
+.stories{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.story{padding:14px 18px 16px;border-left:1px solid var(--ink);display:flex;flex-direction:column;gap:6px;min-width:0}
+.story:first-child{border-left:0;padding-left:0}
+.story .kicker{color:var(--red)}
+.story h3{font-family:var(--f-splash);font-weight:400;font-size:30px;line-height:1;text-transform:uppercase}
+.story p{font-size:16px;line-height:1.45}
+.story .pg{margin-top:auto;font-family:var(--f-type);font-size:13px;font-weight:700}
+.story .pg a{text-decoration-color:var(--red);text-underline-offset:3px}
+
+/* ---------- section heads ---------- */
+.sec{margin-top:52px}
+.sec-head{display:grid;grid-template-columns:auto 1fr auto;align-items:end;gap:16px;border-bottom:3px solid var(--ink);padding-bottom:8px;margin-bottom:22px}
+.sec-head .pgno{font-family:var(--f-type);font-weight:700;font-size:14px}
+.sec-head h2{font-family:var(--f-splash);font-weight:400;font-size:clamp(38px,5.4vw,68px);line-height:.95;text-transform:uppercase}
+.sec-head .sub{font-family:var(--f-type);font-size:13px;text-align:right;max-width:30ch;color:var(--ink-soft)}
+
+/* ---------- rogues' gallery ---------- */
+.rogues{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.rogue{border:1px solid var(--ink);display:flex;flex-direction:column;min-width:0;background:var(--paper)}
+.mug{position:relative;background:var(--paper-2);border-bottom:1px solid var(--ink);aspect-ratio:4/4.2;max-width:100%;overflow:hidden}
+.mug svg{display:block;width:100%;height:100%}
+.mug::after{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--dot) 1.1px,transparent 1.3px);background-size:5px 5px;pointer-events:none}
+.mug .wanted{position:absolute;top:10px;right:-34px;transform:rotate(35deg);background:var(--red);color:var(--on-red);font-family:var(--f-splash);font-size:15px;letter-spacing:.1em;padding:2px 40px}
+.rogue-body{padding:14px 14px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.rogue h3{font-family:var(--f-splash);font-weight:400;font-size:28px;line-height:1;text-transform:uppercase}
+.rogue dl{margin:0;display:grid;gap:8px;font-size:15px;line-height:1.4}
+.rogue dt{font-family:var(--f-type);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.rogue dd{margin:0}
+.rogue .ask{margin-top:auto;border-top:1px solid var(--ink);padding-top:10px;font-size:15px}
+.rogue .ask b{font-family:var(--f-type);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);display:block}
+.disclaim{font-family:var(--f-type);font-size:13px;color:var(--ink-soft);margin-top:14px}
+
+/* ---------- checklist ---------- */
+.clip{border:2px dashed var(--ink);padding:26px clamp(16px,3vw,34px) 26px;position:relative;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:34px}
+.clip .scissors{position:absolute;top:-15px;left:24px;background:var(--paper);padding:0 8px;font-size:22px;line-height:1}
+.clip ol{list-style:none;margin:0;padding:0;counter-reset:q;display:grid;gap:0}
+.clip li{counter-increment:q;border-top:1px solid var(--ink)}
+.clip li:last-child{border-bottom:1px solid var(--ink)}
+.clip label{display:grid;grid-template-columns:32px 1fr 26px;gap:12px;align-items:start;padding:12px 4px;cursor:pointer}
+.clip label::before{content:counter(q);font-family:var(--f-splash);font-size:26px;line-height:1;color:var(--red)}
+.clip .q{font-weight:600;font-size:17px;line-height:1.35}
+.clip .why{display:block;font-weight:400;font-size:15px;color:var(--ink-soft);margin-top:3px}
+.clip input{appearance:none;-webkit-appearance:none;width:24px;height:24px;border:2px solid var(--ink);margin:0;display:grid;place-content:center;cursor:pointer;background:var(--paper)}
+.clip input::after{content:"";width:12px;height:7px;border-left:3px solid var(--on-red);border-bottom:3px solid var(--on-red);transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+.clip input:checked{background:var(--red);border-color:var(--red)}
+.clip input:checked::after{opacity:1}
+.clip input:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.verdict{border:3px solid var(--ink);padding:18px;align-self:start;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);background:var(--paper)}
+.verdict .score{font-family:var(--f-splash);font-size:84px;line-height:.9;font-variant-numeric:tabular-nums}
+.verdict .score small{font-size:36px;color:var(--ink-soft)}
+.meter{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin:12px 0 14px}
+.meter i{height:12px;border:1px solid var(--ink);background:transparent}
+.meter i.on{background:var(--red);border-color:var(--red)}
+.verdict h3{font-family:var(--f-splash);font-weight:400;font-size:28px;line-height:1.02;text-transform:uppercase}
+.verdict p{font-size:16px;margin-top:8px}
+.verdict .btns{margin-top:16px}
+
+/* ---------- ask the editor + corrections ---------- */
+.desk{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:0 28px}
+.letters{column-count:2;column-gap:28px;column-rule:1px solid var(--ink)}
+.letter{break-inside:avoid;margin-bottom:22px}
+.letter .dear{font-style:italic;font-size:17px}
+.letter .sig{font-family:var(--f-type);font-size:13px;margin:6px 0 10px;text-align:right}
+.letter .reply{font-size:16.5px}
+.letter .reply b{font-family:var(--f-splash);font-weight:400;font-size:20px;letter-spacing:.02em;margin-right:4px;color:var(--red)}
+.side{border-left:1px solid var(--ink);padding-left:28px;display:flex;flex-direction:column;gap:22px;min-width:0}
+.corrections{background:var(--paper-2);border-top:3px solid var(--ink);padding:14px 16px}
+.corrections h3{font-family:var(--f-type);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.corrections p{font-size:15px;line-height:1.45;margin-bottom:10px}
+.corrections p:last-child{margin-bottom:0}
+.forecast{border:1px solid var(--ink);padding:14px 16px}
+.forecast h3{font-family:var(--f-black);font-weight:400;font-size:26px;margin-bottom:6px}
+.forecast table{width:100%;border-collapse:collapse;font-family:var(--f-type);font-size:13.5px}
+.forecast td{padding:5px 0;border-top:1px dotted var(--ink-soft);vertical-align:top}
+.forecast td:last-child{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;padding-left:10px}
+
+/* ---------- classifieds ---------- */
+.classifieds{column-count:4;column-gap:20px;column-rule:1px solid var(--ink)}
+.ad{break-inside:avoid;border:1px solid var(--ink);padding:12px 12px 14px;margin-bottom:20px;font-size:15px;line-height:1.42}
+.ad h3{font-family:var(--f-splash);font-weight:400;font-size:24px;line-height:1;text-transform:uppercase;margin-bottom:6px}
+.ad .cat{font-family:var(--f-type);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--red);display:block;margin-bottom:4px}
+.ad ul{margin:8px 0 0;padding-left:18px}
+.ad .terms{font-family:var(--f-type);font-size:12.5px;margin-top:8px;border-top:1px dotted var(--ink-soft);padding-top:6px}
+.ad.feature{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.ad.feature .cat{color:var(--hi)}
+.ad.feature .terms{border-color:var(--paper)}
+.ad.personal{font-family:var(--f-type);font-size:14px}
+
+/* ---------- editor's note + letters form ---------- */
+.note{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:0 34px;border-top:3px double var(--ink);padding-top:22px}
+.note-text h2{font-family:var(--f-black);font-weight:400;font-size:clamp(34px,4vw,48px);line-height:1.05;margin-bottom:12px}
+.note-text p{margin-bottom:.8em;max-width:60ch}
+.note-text .sigline{font-family:var(--f-black);font-size:34px;line-height:1;margin-top:6px}
+.note-text .title{font-family:var(--f-type);font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+form.write{border:3px solid var(--ink);padding:20px;display:grid;gap:14px;align-self:start;min-width:0}
+form.write h3{font-family:var(--f-splash);font-weight:400;font-size:32px;line-height:1;text-transform:uppercase}
+form.write .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+form.write label{display:grid;gap:4px;font-family:var(--f-type);font-weight:700;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;min-width:0}
+form.write input,form.write textarea,form.write select{font:inherit;font-family:var(--f-body);font-weight:400;font-size:16px;letter-spacing:0;text-transform:none;color:var(--ink);background:var(--paper);border:0;border-bottom:2px solid var(--ink);padding:8px 2px;border-radius:0;width:100%}
+form.write textarea{border:2px solid var(--ink);min-height:110px;resize:vertical;padding:8px}
+form.write input:focus,form.write textarea:focus,form.write select:focus{outline:none;border-color:var(--red)}
+.sent{font-family:var(--f-type);font-size:14px;border-left:4px solid var(--red);padding:6px 10px}
+
+/* ---------- colophon ---------- */
+.colophon{margin-top:46px;border-top:3px double var(--ink);padding-top:12px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;font-family:var(--f-type);font-size:13px;color:var(--ink-soft)}
+
+/* ---------- responsive ---------- */
+@media (max-width:1020px){
+  .lead{grid-column:1/-1}
+  .rail{grid-column:1/-1;border-left:0;padding-left:0;display:grid;grid-template-columns:1fr 1fr;align-items:start}
+  .stories{grid-template-columns:1fr 1fr}
+  .story:nth-child(3){border-left:0;padding-left:0}
+  .story:nth-child(n+3){border-top:1px solid var(--ink)}
+  .rogues{grid-template-columns:1fr 1fr}
+  .classifieds{column-count:2}
+  .desk{grid-template-columns:1fr}
+  .side{border-left:0;padding-left:0;border-top:1px solid var(--ink);padding-top:22px;display:grid;grid-template-columns:1fr 1fr}
+}
+@media (max-width:720px){
+  body{font-size:16.5px}
+  .masthead{grid-template-columns:1fr;gap:10px}
+  .ear{display:none}
+  .sections{justify-content:flex-start;gap:2px 16px;font-size:13px}
+  .cols,.letters{column-count:1}
+  .cols p{text-align:left}
+  .rail,.side{grid-template-columns:1fr}
+  .stories{grid-template-columns:1fr}
+  .story{border-left:0;padding-left:0;border-top:1px solid var(--ink)}
+  .story:first-child{border-top:0}
+  .sec-head{grid-template-columns:1fr}
+  .sec-head .sub{text-align:left}
+  .clip{grid-template-columns:1fr}
+  .verdict{position:static}
+  .classifieds{column-count:1}
+  .note{grid-template-columns:1fr;gap:26px}
+  form.write .row{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .rogues{grid-template-columns:1fr}
+  .mug{aspect-ratio:16/9}
+  .folio span:nth-child(3){display:none}
+}
+</style>
+
+<div class="sheet">
+
+  <div class="folio">
+    <span>Vol. I &middot; No. 11</span>
+    <span>Friday, November 6, 2026</span>
+    <span>Late City Edition</span>
+    <span>Free to every business owner</span>
+  </div>
+
+  <header class="masthead">
+    <div class="ear"><b>Today&rsquo;s forecast</b>Pipeline cloudy. 70% chance of ghosting by Thursday. <a href="#forecast">Full report</a></div>
+    <div class="flag">
+      <div class="box"><span>VELQUIRY</span></div>
+      <div class="motto">The Business Owner&rsquo;s Paper of Record</div>
+    </div>
+    <div class="ear right"><b>Inside</b>The Retainer Bandit strikes again. Mugshots on <a href="#rogues">page A3</a></div>
+  </header>
+
+  <nav class="sections" aria-label="Sections">
+    <a href="#front">Front Page</a>
+    <a href="#inside">Exposés</a>
+    <a href="#rogues">Most Wanted</a>
+    <a href="#checklist">The Checklist</a>
+    <a href="#desk">Ask the Editor</a>
+    <a href="#classifieds">Classifieds</a>
+    <a class="cta-link" href="#write">Write to the Editor &rarr;</a>
+  </nav>
+
+  <div class="ticker" aria-label="Breaking headlines">
+    <div class="tag">BREAKING</div>
+    <div class="track">
+      <ul>
+        <li>Local bakery&rsquo;s &ldquo;viral&rdquo; post reaches 40,000 people, sells 3 croissants</li>
+        <li>Agency report runs 31 pages; the word &ldquo;customer&rdquo; appears once</li>
+        <li>AI assistant asked for &ldquo;best plumber near me,&rdquo; names three rivals</li>
+        <li>Contact form found unanswered since March</li>
+        <li>CRM purchased; spreadsheet still in charge</li>
+        <li aria-hidden="true">Local bakery&rsquo;s &ldquo;viral&rdquo; post reaches 40,000 people, sells 3 croissants</li>
+        <li aria-hidden="true">Agency report runs 31 pages; the word &ldquo;customer&rdquo; appears once</li>
+        <li aria-hidden="true">AI assistant asked for &ldquo;best plumber near me,&rdquo; names three rivals</li>
+        <li aria-hidden="true">Contact form found unanswered since March</li>
+        <li aria-hidden="true">CRM purchased; spreadsheet still in charge</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ FRONT PAGE ============ -->
+  <main id="front" class="front">
+    <section class="splash">
+      <div class="stamp">EXCLUSIVE</div>
+      <h1>Owner buys $40K of software. <span class="red">Customers still can&rsquo;t tell what they sell.</span></h1>
+      <p class="deck">An investigation into wasted marketing budgets finds the same culprit again and again: a fuzzy offer on the first screen, long before any tool was bought.</p>
+    </section>
+
+    <article class="lead">
+      <div class="byline"><span>By <b>Chris Basil</b>, Founder &amp; Editor</span><span>Velquiry Newsroom</span><span>4 min read</span></div>
+      <div class="cols">
+        <p>The demo was flawless. The dashboard glowed green. Eleven months and one annual contract later, the phone at a family-run contracting firm rang no more often than it had before.</p>
+        <p>It is a story this paper hears every week. A business owner senses something is off with marketing, and the market answers with a product: a new CRM, an AI chatbot, an automation suite, a retainer with a sharp-dressed agency.</p>
+        <p class="pull">&ldquo;No tool can rescue an offer nobody understands.&rdquo;</p>
+        <p>The pattern is consistent. Visitors land on a homepage that describes the company and never states the deal. Enquiries arrive and wait two days for a reply. Emails go out that ask for attention and offer nothing in return.</p>
+        <p>None of those problems are fixed by buying software. Each of them can be found in an afternoon, if you know where to look. That is the job of this paper: find the problem first, in plain English, then decide whether a tool is needed at all.</p>
+        <p class="cont">Continued in <a href="#checklist">The Checklist, page A4</a> &rarr;</p>
+      </div>
+    </article>
+
+    <aside class="rail">
+      <figure class="photo" style="margin:0">
+        <svg viewBox="0 0 480 300" role="img" aria-label="Illustration of a marketing dashboard where every metric rises except customers, which reads zero">
+          <rect x="0" y="0" width="480" height="300" fill="var(--paper-2)"/>
+          <rect x="24" y="22" width="432" height="256" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+          <rect x="24" y="22" width="432" height="26" fill="var(--ink)"/>
+          <circle cx="40" cy="35" r="5" fill="var(--paper)"/><circle cx="56" cy="35" r="5" fill="var(--paper)"/><circle cx="72" cy="35" r="5" fill="var(--paper)"/>
+          <g font-family="Courier Prime, Courier New, monospace" font-size="12" fill="var(--ink)">
+            <rect x="40" y="62" width="122" height="62" fill="none" stroke="var(--ink)"/>
+            <text x="50" y="80">IMPRESSIONS</text><text x="50" y="110" font-size="22" font-weight="700">1.2M &#9650;</text>
+            <rect x="179" y="62" width="122" height="62" fill="none" stroke="var(--ink)"/>
+            <text x="189" y="80">ENGAGEMENT</text><text x="189" y="110" font-size="22" font-weight="700">+312% &#9650;</text>
+            <rect x="318" y="62" width="122" height="62" fill="var(--red)" stroke="var(--red)"/>
+            <text x="328" y="80" fill="var(--on-red)">CUSTOMERS</text><text x="328" y="112" font-size="30" font-weight="700" fill="var(--on-red)">0</text>
+          </g>
+          <polyline points="44,256 92,240 140,246 188,214 236,220 284,184 332,170 380,150 436,122" fill="none" stroke="var(--ink)" stroke-width="3"/>
+          <polyline points="44,262 436,262" fill="none" stroke="var(--red)" stroke-width="3" stroke-dasharray="7 5"/>
+          <g stroke="var(--ink)" stroke-width="1" opacity=".35"><line x1="40" y1="150" x2="440" y2="150"/><line x1="40" y1="200" x2="440" y2="200"/></g>
+        </svg>
+      </figure>
+      <p class="caption"><b>PICTURED:</b> A dashboard where every number goes up except the one that pays the bills. (Dramatization. Barely.)</p>
+
+      <div class="coupon">
+        <span class="scissors" aria-hidden="true">&#9986;</span>
+        <h2>Clip &amp; keep: the 7-question checklist</h2>
+        <p>Seven yes-or-no questions about your offer, your website and your follow-up. Score yourself before you buy another tool.</p>
+        <div class="btns">
+          <a class="btn primary" href="#checklist">Take the checklist &darr;</a>
+          <a class="btn ghost" href="#write">Tell us your problem</a>
+        </div>
+        <p class="fine">No email. No sales call. The whole thing is printed on this page.</p>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ============ INSIDE ============ -->
+  <section id="inside" class="inside" aria-labelledby="inside-h">
+    <div class="inside-head">
+      <h2 id="inside-h">Inside This Edition</h2>
+      <span class="kicker">Four problems. Four plain fixes.</span>
+    </div>
+    <div class="stories">
+      <article class="story">
+        <span class="kicker">AI search &middot; A2</span>
+        <h3>The Name Snatcher</h3>
+        <p>Ask ChatGPT for the best firm like yours in town. If it names your rivals, buyers are hearing about them first.</p>
+        <span class="pg"><a href="#checklist">Run question 4 &rarr;</a></span>
+      </article>
+      <article class="story">
+        <span class="kicker">Offers &middot; A2</span>
+        <h3>The Offer Vampire</h3>
+        <p>Emails that ask for a call and give nothing back drain goodwill one send at a time. Give a reason to reply.</p>
+        <span class="pg"><a href="#checklist">Run question 2 &rarr;</a></span>
+      </article>
+      <article class="story">
+        <span class="kicker">Follow-up &middot; A3</span>
+        <h3>The Lead Swallower</h3>
+        <p>Your next customer filled in the form last Tuesday. Nobody replied. Trace one enquiry from form to first answer.</p>
+        <span class="pg"><a href="#checklist">Run question 5 &rarr;</a></span>
+      </article>
+      <article class="story">
+        <span class="kicker">Website &middot; A3</span>
+        <h3>The Website Zombie</h3>
+        <p>It looks alive, but the first screen says nothing a buyer can act on. Five seconds is all a stranger gives it.</p>
+        <span class="pg"><a href="#checklist">Run question 1 &rarr;</a></span>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ ROGUES ============ -->
+  <section id="rogues" class="sec" aria-labelledby="rogues-h">
+    <div class="sec-head">
+      <span class="pgno">A3</span>
+      <h2 id="rogues-h">Most Wanted: The Marketing Rogues&rsquo; Gallery</h2>
+      <span class="sub">If one of these characters is on your payroll, ask the question at the bottom of their card.</span>
+    </div>
+    <div class="rogues">
+
+      <article class="rogue">
+        <div class="mug">
+          <svg viewBox="0 0 200 210" aria-hidden="true">
+            <g stroke="var(--ink)" stroke-width="1" opacity=".45"><line x1="0" y1="40" x2="200" y2="40"/><line x1="0" y1="80" x2="200" y2="80"/><line x1="0" y1="120" x2="200" y2="120"/><line x1="0" y1="160" x2="200" y2="160"/></g>
+            <g font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)" opacity=".7"><text x="4" y="37">6'</text><text x="4" y="77">5'6</text><text x="4" y="117">5'</text></g>
+            <path d="M40 210 C44 160 70 146 100 146 C130 146 156 160 160 210Z" fill="var(--ink)"/>
+            <ellipse cx="100" cy="98" rx="34" ry="40" fill="var(--ink)"/>
+            <rect x="74" y="148" width="52" height="6" fill="var(--red)"/>
+            <rect x="52" y="168" width="96" height="30" fill="var(--paper)" stroke="var(--ink)"/>
+            <text x="100" y="181" text-anchor="middle" font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)">CASE 12-MONTH</text>
+            <text x="100" y="193" text-anchor="middle" font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)">LOCK-IN</text>
+          </svg>
+          <span class="wanted">WANTED</span>
+        </div>
+        <div class="rogue-body">
+          <h3>The Retainer Bandit</h3>
+          <dl>
+            <div><dt>Modus operandi</dt><dd>A 12-month contract and a monthly report full of &ldquo;activity.&rdquo; Results are always one quarter away.</dd></div>
+            <div><dt>Last seen</dt><dd>Sending invoice #11 for &ldquo;strategy.&rdquo;</dd></div>
+          </dl>
+          <p class="ask"><b>Ask them</b>&ldquo;What happens if I cancel in month three?&rdquo;</p>
+        </div>
+      </article>
+
+      <article class="rogue">
+        <div class="mug">
+          <svg viewBox="0 0 200 210" aria-hidden="true">
+            <g stroke="var(--ink)" stroke-width="1" opacity=".45"><line x1="0" y1="40" x2="200" y2="40"/><line x1="0" y1="80" x2="200" y2="80"/><line x1="0" y1="120" x2="200" y2="120"/><line x1="0" y1="160" x2="200" y2="160"/></g>
+            <g font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)" opacity=".7"><text x="4" y="37">6'</text><text x="4" y="77">5'6</text><text x="4" y="117">5'</text></g>
+            <path d="M40 210 C44 160 70 146 100 146 C130 146 156 160 160 210Z" fill="var(--ink)"/>
+            <ellipse cx="100" cy="98" rx="34" ry="40" fill="var(--ink)"/>
+            <rect x="68" y="88" width="64" height="14" rx="3" fill="var(--red)"/>
+            <rect x="52" y="168" width="96" height="30" fill="var(--paper)" stroke="var(--ink)"/>
+            <text x="100" y="181" text-anchor="middle" font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)">CASE 1.2M</text>
+            <text x="100" y="193" text-anchor="middle" font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)">IMPRESSIONS</text>
+          </svg>
+          <span class="wanted">WANTED</span>
+        </div>
+        <div class="rogue-body">
+          <h3>The Vanity Metric Peddler</h3>
+          <dl>
+            <div><dt>Modus operandi</dt><dd>Reach, impressions and &ldquo;engagement,&rdquo; presented in large green numbers. Sales figures are never on the slide.</dd></div>
+            <div><dt>Last seen</dt><dd>Celebrating a 312% rise from a base of four.</dd></div>
+          </dl>
+          <p class="ask"><b>Ask them</b>&ldquo;How many of these became paying customers?&rdquo;</p>
+        </div>
+      </article>
+
+      <article class="rogue">
+        <div class="mug">
+          <svg viewBox="0 0 200 210" aria-hidden="true">
+            <g stroke="var(--ink)" stroke-width="1" opacity=".45"><line x1="0" y1="40" x2="200" y2="40"/><line x1="0" y1="80" x2="200" y2="80"/><line x1="0" y1="120" x2="200" y2="120"/><line x1="0" y1="160" x2="200" y2="160"/></g>
+            <g font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)" opacity=".7"><text x="4" y="37">6'</text><text x="4" y="77">5'6</text><text x="4" y="117">5'</text></g>
+            <path d="M40 210 C44 160 70 146 100 146 C130 146 156 160 160 210Z" fill="var(--ink)"/>
+            <ellipse cx="100" cy="98" rx="34" ry="40" fill="var(--ink)"/>
+            <rect x="58" y="58" width="84" height="8" fill="var(--ink)"/><rect x="72" y="30" width="56" height="32" fill="var(--ink)"/><rect x="72" y="50" width="56" height="6" fill="var(--red)"/>
+            <rect x="52" y="168" width="96" height="30" fill="var(--paper)" stroke="var(--ink)"/>
+            <text x="100" y="181" text-anchor="middle" font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)">CASE #1 ON</text>
+            <text x="100" y="193" text-anchor="middle" font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)">GOOGLE, GUARANTEED</text>
+          </svg>
+          <span class="wanted">WANTED</span>
+        </div>
+        <div class="rogue-body">
+          <h3>The Page-One Prophet</h3>
+          <dl>
+            <div><dt>Modus operandi</dt><dd>Guarantees the top spot on Google, or now in AI answers. Neither Google nor any AI company sells that guarantee to anyone.</dd></div>
+            <div><dt>Last seen</dt><dd>In your inbox, subject line &ldquo;Quick question.&rdquo;</dd></div>
+          </dl>
+          <p class="ask"><b>Ask them</b>&ldquo;Who decides the ranking, and how do you control them?&rdquo;</p>
+        </div>
+      </article>
+
+      <article class="rogue">
+        <div class="mug">
+          <svg viewBox="0 0 200 210" aria-hidden="true">
+            <g stroke="var(--ink)" stroke-width="1" opacity=".45"><line x1="0" y1="40" x2="200" y2="40"/><line x1="0" y1="80" x2="200" y2="80"/><line x1="0" y1="120" x2="200" y2="120"/><line x1="0" y1="160" x2="200" y2="160"/></g>
+            <g font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)" opacity=".7"><text x="4" y="37">6'</text><text x="4" y="77">5'6</text><text x="4" y="117">5'</text></g>
+            <path d="M40 210 C44 160 70 146 100 146 C130 146 156 160 160 210Z" fill="var(--ink)"/>
+            <ellipse cx="100" cy="98" rx="34" ry="40" fill="var(--ink)"/>
+            <rect x="140" y="120" width="40" height="28" fill="var(--red)"/><rect x="152" y="112" width="16" height="10" fill="none" stroke="var(--red)" stroke-width="4"/>
+            <rect x="52" y="168" width="96" height="30" fill="var(--paper)" stroke="var(--ink)"/>
+            <text x="100" y="181" text-anchor="middle" font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)">CASE AFFILIATE</text>
+            <text x="100" y="193" text-anchor="middle" font-family="Courier Prime, monospace" font-size="9" fill="var(--ink)">LINK UNDISCLOSED</text>
+          </svg>
+          <span class="wanted">WANTED</span>
+        </div>
+        <div class="rogue-body">
+          <h3>The Tool Pusher</h3>
+          <dl>
+            <div><dt>Modus operandi</dt><dd>Every problem needs new software, and the recommended software pays the recommender a commission.</dd></div>
+            <div><dt>Last seen</dt><dd>Selling a CRM to a business that gets six enquiries a month.</dd></div>
+          </dl>
+          <p class="ask"><b>Ask them</b>&ldquo;Do you get paid if I buy this?&rdquo;</p>
+        </div>
+      </article>
+
+    </div>
+    <p class="disclaim">These are composite characters. Any resemblance to the agency that last invoiced you is a matter between you and them.</p>
+  </section>
+
+  <!-- ============ CHECKLIST ============ -->
+  <section id="checklist" class="sec" aria-labelledby="check-h">
+    <div class="sec-head">
+      <span class="pgno">A4</span>
+      <h2 id="check-h">The 7-Question Checklist</h2>
+      <span class="sub">Tick every statement that is true today. Your score updates as you go.</span>
+    </div>
+    <div class="clip">
+      <span class="scissors" aria-hidden="true">&#9986;</span>
+      <ol>
+        <li><label for="q1"><span class="q">A stranger can say what you sell, and who it&rsquo;s for, after five seconds on your homepage.<span class="why">Test it on someone outside the business. No hints.</span></span><input type="checkbox" id="q1"></label></li>
+        <li><label for="q2"><span class="q">Your offer names a specific result, a timeframe, and what happens if it doesn&rsquo;t work.<span class="why">&ldquo;Quality service&rdquo; is not an offer.</span></span><input type="checkbox" id="q2"></label></li>
+        <li><label for="q3"><span class="q">A buyer can see your price, or how you set it, without booking a call.<span class="why">Hidden pricing makes careful buyers leave first.</span></span><input type="checkbox" id="q3"></label></li>
+        <li><label for="q4"><span class="q">When you ask an AI assistant for a business like yours nearby, it names you.<span class="why">Try ChatGPT, Gemini and Perplexity. Write down who they name instead.</span></span><input type="checkbox" id="q4"></label></li>
+        <li><label for="q5"><span class="q">Every enquiry gets a human reply within one business hour.<span class="why">Send yourself a test enquiry and time it.</span></span><input type="checkbox" id="q5"></label></li>
+        <li><label for="q6"><span class="q">You know where your last ten customers first heard of you.<span class="why">If the answer is &ldquo;mostly referrals,&rdquo; you still need the list.</span></span><input type="checkbox" id="q6"></label></li>
+        <li><label for="q7"><span class="q">You could cancel any marketing contract this month without a penalty.<span class="why">Read the cancellation clause, not the sales deck.</span></span><input type="checkbox" id="q7"></label></li>
+      </ol>
+      <div class="verdict" aria-live="polite">
+        <span class="kicker">Your score</span>
+        <div class="score"><span id="score">0</span><small>/7</small></div>
+        <div class="meter" id="meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <h3 id="v-head">Front-page disaster</h3>
+        <p id="v-body">Hold off on any new tool. Fix the offer and the first screen of your website first; that&rsquo;s where the money is leaking.</p>
+        <div class="btns">
+          <a class="btn primary" href="#write">Send me your score</a>
+        </div>
+        <p class="fine">Nothing you tick leaves this page.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ASK THE EDITOR ============ -->
+  <section id="desk" class="sec" aria-labelledby="desk-h">
+    <div class="sec-head">
+      <span class="pgno">B1</span>
+      <h2 id="desk-h">Dear Velquiry</h2>
+      <span class="sub">Real questions from business owners, answered without jargon. Names withheld.</span>
+    </div>
+    <div class="desk">
+      <div class="letters">
+        <div class="letter">
+          <p class="dear">Dear Velquiry, my agency says our ads are &ldquo;performing well.&rdquo; My phone has not rung more than usual in four months. Who do I believe?</p>
+          <p class="sig">&mdash; Puzzled in Plano</p>
+          <p class="reply"><b>DEAR PUZZLED:</b> Believe the phone. Ask the agency for one number: how many paying customers came from the ads last month, and what each one cost. If they can&rsquo;t tell you, they are reporting on the ads, not on your business.</p>
+        </div>
+        <div class="letter">
+          <p class="dear">Dear Velquiry, my nephew says I need an AI chatbot on my website. I sell kitchen remodels. Does he have a point?</p>
+          <p class="sig">&mdash; Skeptical in Spokane</p>
+          <p class="reply"><b>DEAR SKEPTICAL:</b> Maybe later. First check what happens when a real person fills in your form today. If a human replies within the hour, a chatbot adds little. If nobody replies for two days, fix that before you automate anything.</p>
+        </div>
+        <div class="letter">
+          <p class="dear">Dear Velquiry, we have 9,000 people on our email list and nobody opens anything. Should we buy a better email tool?</p>
+          <p class="sig">&mdash; Unopened in Ohio</p>
+          <p class="reply"><b>DEAR UNOPENED:</b> Your tool is fine. Read your last three subject lines out loud. If none of them promise the reader something useful, that&rsquo;s the fix. Give before you ask.</p>
+        </div>
+      </div>
+      <aside class="side">
+        <div class="corrections">
+          <h3>Corrections</h3>
+          <p>An agency case study cited in the trade press claimed &ldquo;312% lead growth.&rdquo; The starting figure was four leads. The new figure is sixteen.</p>
+          <p>A software vendor described its product as &ldquo;set and forget.&rdquo; Readers report that it was mostly forgotten.</p>
+          <p>A proposal promised &ldquo;full-funnel synergy.&rdquo; We have been unable to confirm what this means.</p>
+        </div>
+        <div class="forecast" id="forecast">
+          <h3>Pipeline Forecast</h3>
+          <table>
+            <tr><td>Enquiries answered after 24 hrs</td><td>Stormy</td></tr>
+            <tr><td>Homepage says &ldquo;solutions&rdquo; 3+ times</td><td>Fog</td></tr>
+            <tr><td>Offer with a clear result + deadline</td><td>Sunny</td></tr>
+            <tr><td>Chance of ghosting after a quote</td><td>70%</td></tr>
+          </table>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ CLASSIFIEDS ============ -->
+  <section id="classifieds" class="sec" aria-labelledby="class-h">
+    <div class="sec-head">
+      <span class="pgno">C1</span>
+      <h2 id="class-h">Classifieds</h2>
+      <span class="sub">What Velquiry does, listed plainly. Fixed scope, quoted in writing before work starts.</span>
+    </div>
+    <div class="classifieds">
+      <div class="ad feature">
+        <span class="cat">Services offered</span>
+        <h3>Offer Teardown</h3>
+        <p>Your main offer read line by line by someone who has nothing to sell you afterwards. You get a rewritten offer and the reasons for each change.</p>
+        <p class="terms">Best first step. Written report + 45-min walkthrough.</p>
+      </div>
+      <div class="ad">
+        <span class="cat">Websites</span>
+        <h3>First-Screen Rewrite</h3>
+        <p>The top of your homepage, rewritten so a stranger knows what you sell, who it&rsquo;s for, and what to do next.</p>
+        <ul><li>Headline and subhead</li><li>One clear next step</li><li>Proof a buyer can check</li></ul>
+      </div>
+      <div class="ad">
+        <span class="cat">Follow-up</span>
+        <h3>Lead Trace</h3>
+        <p>We send real test enquiries through every form, number and inbox you have, time the replies, and show you exactly where leads go quiet.</p>
+      </div>
+      <div class="ad">
+        <span class="cat">AI search</span>
+        <h3>AI Visibility Check</h3>
+        <p>We ask the major AI assistants the questions your buyers ask, record who gets named, and list what to change so you&rsquo;re in the answer.</p>
+      </div>
+      <div class="ad">
+        <span class="cat">Email</span>
+        <h3>Email Offer Fix</h3>
+        <p>Your next three emails rewritten to give the reader a reason to reply, with subject lines tested on real people first.</p>
+      </div>
+      <div class="ad">
+        <span class="cat">Before you buy</span>
+        <h3>Tool Second Opinion</h3>
+        <p>About to sign for software or an agency? Send the proposal. We&rsquo;ll tell you whether it solves your actual problem. We take no referral fees from anyone.</p>
+      </div>
+      <div class="ad personal">
+        <span class="cat">Personals</span>
+        <p>SMALL WORRIED MERCHANT, 40s, GSOH, seeks marketing partner who answers emails and can explain a report in one sentence. No 12-month commitments. Box 11.</p>
+      </div>
+      <div class="ad personal">
+        <span class="cat">Lost &amp; found</span>
+        <p>FOUND: One (1) contact form submission, dated March 14, in a shared inbox nobody checks. Owner may claim it at once. The customer has already hired someone else.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EDITOR'S NOTE + WRITE IN ============ -->
+  <section id="write" class="sec note" aria-labelledby="note-h">
+    <div class="note-text">
+      <span class="kicker">From the Editor&rsquo;s Desk</span>
+      <h2 id="note-h">A note on who writes this paper</h2>
+      <p>Velquiry is my company, and I run it myself. There is no account manager, no junior team, no hand-off after the sale. When you write in, I read it, and I answer it.</p>
+      <p>I started Velquiry because I kept watching good businesses spend real money on tools and retainers to fix problems that were really about the offer, the website, or the follow-up. Those problems are cheaper to find than to buy around.</p>
+      <p>If something in this edition sounded familiar, tell me about it. I&rsquo;ll tell you honestly whether I can help, and if a small fix will do, I&rsquo;ll say so.</p>
+      <div class="sigline">Chris Basil</div>
+      <div class="title">Founder &amp; CEO, Velquiry</div>
+    </div>
+
+    <form class="write" id="letter-form" novalidate>
+      <h3>Write to the Editor</h3>
+      <div class="row">
+        <label for="f-name">Your name<input id="f-name" name="name" autocomplete="name" placeholder="Jordan Reyes"></label>
+        <label for="f-biz">Business<input id="f-biz" name="business" placeholder="Reyes Remodeling"></label>
+      </div>
+      <label for="f-email">Email for the reply<input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@yourbusiness.com"></label>
+      <label for="f-topic">Which story sounds like yours?
+        <select id="f-topic" name="topic">
+          <option>The Website Zombie (first screen)</option>
+          <option>The Offer Vampire (email &amp; offers)</option>
+          <option>The Lead Swallower (follow-up)</option>
+          <option>The Name Snatcher (AI search)</option>
+          <option>A rogue on my payroll</option>
+          <option>Something else</option>
+        </select>
+      </label>
+      <label for="f-msg">What&rsquo;s going on?<textarea id="f-msg" name="message" placeholder="We get plenty of website visits but almost no enquiries&hellip;"></textarea></label>
+      <div class="btns"><button class="btn primary" type="submit" id="f-send">Send my letter</button></div>
+      <p class="sent" id="f-status" hidden></p>
+    </form>
+  </section>
+
+  <footer class="colophon">
+    <span>Published by Velquiry, a sole proprietorship. Founder &amp; CEO: Chris Basil.</span>
+    <span>Printed on recycled pixels. No referral fees accepted.</span>
+    <span>&copy; 2026 Velquiry</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var boxes=[].slice.call(document.querySelectorAll('.clip input[type=checkbox]'));
+  var scoreEl=document.getElementById('score'), head=document.getElementById('v-head'), body=document.getElementById('v-body');
+  var bars=[].slice.call(document.querySelectorAll('#meter i'));
+  var verdicts=[
+    [2,'Front-page disaster','Hold off on any new tool. Fix the offer and the first screen of your website first; that’s where the money is leaking.'],
+    [5,'Developing story','The basics are partly there. Look at the questions you left blank: each one is a specific, fixable leak.'],
+    [7,'Clean bill of health','Your foundations hold up. If you buy a tool now, it has something solid to work with.']
+  ];
+  function update(){
+    var n=boxes.filter(function(b){return b.checked}).length;
+    scoreEl.textContent=n;
+    bars.forEach(function(b,i){b.classList.toggle('on',i<n)});
+    for(var i=0;i<verdicts.length;i++){ if(n<=verdicts[i][0]){ head.textContent=verdicts[i][1]; body.textContent=verdicts[i][2]; break; } }
+  }
+  boxes.forEach(function(b){b.addEventListener('change',update)});
+  update();
+
+  var form=document.getElementById('letter-form'), status=document.getElementById('f-status');
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    status.hidden=false;
+    status.textContent='Design preview: this form is not connected yet. On the live site it will deliver your letter to Chris.';
+  });
+})();
+</script>
