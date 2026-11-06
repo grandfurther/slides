@@ -212,61 +212,108 @@ p{margin:0}
 .colophon .tag3{font-family:var(--f-head);font-weight:800;font-size:16px;letter-spacing:.06em;color:var(--cream);text-transform:uppercase}
 
 
-/* ---------- red & black edition: dark sheets, red bands, gold only on the primary CTA ---------- */
-body{background:#0b0b0a}
-.top{background:#0b0b0a}
-.sheet,.sheet.cream{background:#0b0b0a;color:#e7dcc9;
-  --ink:#e7dcc9; --cream:#151311; --paper:#0b0b0a; --muted:#a99f8c; --line:#3a3128; --dot:rgba(231,220,201,.05); --red-t:#e3504a}
-.sheet.cream{background:#121110}
-.band{background:#0b0b0a}
-.band.red,.files-band{background:var(--red);color:#f3e9d8}
-.btn.gold{color:#11100e}
-.btn.red{color:#f3e9d8}
-.btn.red:hover{background:#f3e9d8;color:#11100e}
-.sheet .kicker,.sheet .story .kicker,.sheet .ad .cat,.sheet .rogue .ask b,.sheet .sec-head .kicker,.sheet .splash .kicker{color:var(--red-t)}
-.sheet .splash h1 .red,.sheet .pull span,.sheet .story .sys span,.sheet .letter .reply b,.sheet .byline b,.sheet .simplest h3{color:var(--red-t)}
-.sheet .cols p:first-child::first-letter{color:var(--red-t)}
-.sheet .fileno{background:#11100e;color:#e7dcc9;border-color:#e7dcc9}
-.photo{background:#000}
-.photo .tag{color:#e7dcc9}
-.scanbox{background:#000;color:#e7dcc9;border-color:var(--red);box-shadow:6px 6px 0 var(--red)}
-.scanbox p{color:#e7dcc9}
-.scanbox .kicker{color:var(--gold)!important}
-.scanform input{background:#e7dcc9;border-color:#e7dcc9;color:#11100e}
-.trust{border-color:var(--red)}
-.trust .kicker{color:#f3e9d8!important}
-.slogan.r{color:var(--red-t)}
-.rogue{border-color:#3a3128}
-.rogue .head{background:var(--red);color:#f3e9d8}
-.rogue .head .st{color:#11100e;background:#f3e9d8;padding:0 6px}
-.rogue .ask{border-top-color:var(--red)}
-.ad{border-color:#3a3128}
-.ad .price{color:#e7dcc9}
-.simplest{border-color:var(--red)}
-.stamp{border-color:var(--red-t);color:var(--red-t)}
-.corrections{background:var(--red);color:#f3e9d8}
-.corrections h3{color:#11100e}
-.sheet .sec-head{border-bottom-color:var(--red)}
-.sheet .stories{border-top-color:#3a3128}
-.sheet .story,.sheet .side,.sheet .rail{border-left-color:#3a3128}
-.sheet .cols,.sheet .letters,.sheet .classifieds{column-rule-color:#3a3128}
-.sheet .splash{border-bottom-color:var(--red)}
-.sheet .pull{border-color:var(--red)}
-.files-head .kicker{color:#11100e}
-.files li{border-color:rgba(243,233,216,.5);background:rgba(0,0,0,.18)!important}
-.files li:nth-child(odd){background:rgba(0,0,0,.32)!important}
-.files .n{color:#f3e9d8}
-.files .f{color:rgba(243,233,216,.75)}
-.steps li::before{color:var(--red-t,#e3504a)}
-.final-band{background:var(--red);color:#f3e9d8}
-.final-band .kicker{color:#11100e!important}
-.final-band .final h2 .g{color:#11100e}
-.final-band .human{color:#11100e}
-.final-band .final .sig,.final-band .colophon{color:rgba(243,233,216,.8)}
-.final-band .colophon{border-top-color:rgba(243,233,216,.6)}
+/* ---------- UK red-top edition: red masthead, newsprint front, black reverse panels, red straplines. Gold only on the primary CTA. ---------- */
+body{background:#f1efea}
+.top{background:var(--red);color:#fff}
+.folio{color:rgba(255,255,255,.85);border-bottom-color:rgba(255,255,255,.35)}
+.folio b{color:#fff}
+.masthead{grid-template-columns:auto 1fr 1fr;gap:16px;padding-block:16px}
+.flag{justify-items:start;text-align:left;gap:8px}
+.flag .wordmark{display:inline-block;background:#11100e;padding:16px 22px 14px;font-size:clamp(60px,9vw,108px)}
+.flag .motto{color:#fff;font-weight:700}
+.ear{background:#fff;color:#11100e;border:0;max-width:none;align-self:stretch;display:flex;flex-direction:column;justify-content:center;padding:12px 14px;font-family:var(--f-head);font-weight:800;font-size:22px;line-height:1;text-transform:uppercase}
+.ear .kicker{color:var(--red)!important;font-size:12px;margin-bottom:6px}
+.ear a{color:var(--red)}
+.ear.right{justify-self:stretch;background:#11100e;color:#fff}
+.ear.right .kicker{color:var(--gold)!important}
+.sections{background:#11100e;border:0;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));justify-content:flex-start;color:#fff}
+.sections a:hover{color:var(--gold)}
+.ticker{border:0;background:#fff;color:#11100e;margin-block:10px 14px}
+.ticker .tag{background:#11100e;color:#fff}
+.ticker li::before{color:var(--red)}
+
+.sheet,.sheet.cream{background:#f1efea;color:#11100e;--ink:#11100e;--cream:#ffffff;--muted:#55504a;--dot:transparent}
+.sheet.cream{background:#fff}
+.front{padding-top:18px}
+.splash{border-bottom:6px solid #11100e;grid-template-columns:1fr;position:relative}
+.splash .fileno{display:none}
+.flash{position:static;display:inline-block;margin:0 14px 10px 0;vertical-align:middle;background:#11100e;color:#fff;font-family:var(--f-head);font-weight:900;font-size:26px;letter-spacing:.04em;padding:6px 14px;transform:rotate(3deg)}
+.flash b{color:var(--gold)}
+.splash .kicker{color:var(--red)}
+.splash h1{font-size:clamp(58px,11vw,160px);line-height:.86;letter-spacing:-.015em}
+.splash h1 .red{display:inline;background:var(--red);color:#fff;padding:0 .08em;box-decoration-break:clone;-webkit-box-decoration-break:clone;line-height:1.02}
+.deck{font-family:var(--f-head);font-weight:800;font-size:clamp(22px,2.4vw,30px);line-height:1.08;text-transform:uppercase;max-width:40ch}
+.deck b{color:var(--red)}
+.byline b,.pull span,.cols p:first-child::first-letter,.story .sys span,.letter .reply b{color:var(--red)}
+.pull{border-color:#11100e;border-width:6px 0}
+.photo{border:0}
+.rail{border-left:0}
+.scanbox{background:#11100e;color:#fff;box-shadow:none;border:0;border-top:10px solid var(--red)}
+.scanbox p{color:#fff}
+.scanbox .kicker{color:var(--gold)}
+.trust{background:var(--red);color:#fff;border:0}
+.trust .kicker{background:#11100e;color:#fff}
+.slogan{background:#11100e;color:#fff;border:0}
+.slogan.r{background:#fff;color:var(--red);border:3px solid var(--red)}
+
+.files-band{background:#11100e;color:#fff}
+.files-head .kicker{color:var(--gold)}
+.files li{border:0;background:var(--red)!important;color:#fff}
+.files li:nth-child(even){background:#2a2522!important}
+.files .n{color:#fff}
+.files .f{color:rgba(255,255,255,.75)}
+
+.sec-head{border-bottom:6px solid #11100e}
+.band .sec-head{border-bottom-color:var(--red)}
+.sec-head .fileno{background:var(--red);color:#fff;border:0;box-shadow:none;padding:4px 12px 6px}
+.band .sec-head .fileno{color:#fff}
+.sec-head .kicker{display:inline-block;background:var(--red);color:#fff!important;padding:3px 8px;margin-bottom:8px}
+.band .sec-head .kicker{background:var(--gold);color:#11100e!important}
+.sec-head h2{font-size:clamp(40px,6vw,78px);line-height:.88}
+
+.story h3{font-size:38px}
+.stories{border-top:0}
+.story .kicker{color:#fff;background:#11100e;align-self:flex-start;padding:2px 8px}
+.band{background:#11100e}
+.steps li::before{color:var(--red)}
+.steps li.hidden{background:var(--red)}
+.rogue{background:#fff;border:3px solid #11100e}
+.rogue .head{background:var(--red);color:#fff}
+.rogue .head .st{background:#fff;color:var(--red);padding:0 6px}
+.rogue h3{font-size:32px}
+.ad{background:#fff;border:2px solid #11100e}
+.ad .cat{color:var(--red)}
+.ad .price{background:#11100e;color:#fff;border:0;padding:6px 8px;margin-inline:-12px;margin-bottom:-14px;margin-top:10px}
+.ad.lost{background:transparent}
+.simplest{background:var(--red);color:#fff;border:0}
+.simplest .kicker{color:#fff}
+.simplest h3{color:#fff;font-size:46px}
+.budget{border-top-color:#fff}
+.simplest .btn.red{background:#11100e}
+.stamp{border-color:#fff;color:#fff}
+.corrections{background:#11100e;color:#fff}
+.corrections h3{color:var(--red);background:#fff;display:inline-block;padding:2px 8px}
+.letters{column-rule-color:#11100e}
+.final-band{background:var(--red);color:#fff}
+.final-band .kicker{color:#fff}
+.final-band .final h2 .g,.final-band .human{color:#11100e}
+.final-band .final .sig,.final-band .colophon{color:rgba(255,255,255,.85)}
+.final-band .colophon{border-top-color:rgba(255,255,255,.6)}
 .final-band .colophon .wordmark{background:#11100e;padding:8px 12px}
-.final-band .btn.line{color:#f3e9d8}
+.final-band .colophon .tag3{color:#fff}
+.final-band .btn.line{color:#fff}
 .final-band .btn.line:hover{background:#11100e;border-color:#11100e}
+.btn.gold{color:#11100e}
+.btn.red{color:#fff}
+@media (max-width:900px){
+  .masthead{grid-template-columns:1fr 1fr}
+  .flag{grid-column:1/-1}
+  .ear{display:flex;font-size:18px}
+}
+@media (max-width:720px){
+  .ear{display:none}
+  .flash{position:static;justify-self:start;margin-bottom:8px;transform:rotate(-2deg);font-size:20px}
+}
 
 /* ---------- responsive ---------- */
 @media (max-width:1060px){
@@ -321,12 +368,12 @@ body{background:#0b0b0a}
       <span><b>Free. Fast. No nonsense.</b></span>
     </div>
     <div class="masthead">
-      <div class="ear"><span class="kicker">Case file 001</span>Digital health: how healthy is your website, really? <a href="#scan">Start your scan</a></div>
       <div class="flag">
         <a class="wordmark" href="#top">VEL<span>Q</span>UIRY</a>
         <div class="motto">Systems &middot; Signals &middot; Decisions &middot; Growth</div>
       </div>
-      <div class="ear right"><span class="kicker">Trust rule</span>Unknown is better than an invented answer. Every figure in this edition is sourced or marked.</div>
+      <div class="ear"><span class="kicker">Case files, A4</span>Four characters who will sell you a fix you don&rsquo;t need</div>
+      <div class="ear right"><span class="kicker">Trust rule</span>Unknown beats an invented answer</div>
     </div>
     <nav class="sections" aria-label="Sections">
       <a href="#front">Front page</a>
@@ -363,6 +410,7 @@ body{background:#0b0b0a}
     <section class="splash">
       <div class="fileno" aria-hidden="true">1</div>
       <div>
+        <span class="flash">FREE SCAN <b>INSIDE</b></span>
         <span class="kicker">Case file 001 / Digital health</span>
         <h1>How healthy is your <span class="red">digital presence?</span></h1>
         <p class="deck">Velquiry helps founders make better business decisions through evidence-led website, growth, and operating systems. <b>Let&rsquo;s find out.</b></p>
@@ -382,7 +430,7 @@ body{background:#0b0b0a}
         <p class="pull">Separate the <span>symptoms</span> from the root cause. Then decide what to buy.</p>
         <p>That is what the scan is for. Give us a URL and we fetch the page, read its signals, check its speed, and verify the evidence before we show you a single score. If we can&rsquo;t verify something, the report says so.</p>
         <p>Then we recommend the smallest solution capable of solving the problem. Sometimes that&rsquo;s a system. Sometimes it&rsquo;s a sentence.</p>
-        <p class="cont">Your scan starts on the right &rarr; or <a href="#how">see how it works</a></p>
+        <p class="cont"><a href="#scan">Start your free scan &rarr;</a> or <a href="#how">see how it works</a></p>
       </div>
     </article>
 
