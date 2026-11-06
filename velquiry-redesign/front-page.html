@@ -346,6 +346,13 @@ body{background:#f1efea}
   .poster{background:repeating-conic-gradient(from 0deg at 50% 28%,#a9201c 0 7.5deg,#8c1916 7.5deg 15deg)}
 }
 
+.roster{border:2px solid var(--red);padding:18px}
+.roster .kicker{color:var(--gold)}
+.roster ul{list-style:none;margin:12px 0 0;padding:0}
+.roster li{display:grid;gap:2px;padding:12px 0;border-top:1px solid #3a3128}
+.roster b{font-family:var(--f-head);font-weight:900;font-size:26px;text-transform:uppercase;line-height:1;color:#f3e9d8}
+.roster li span{font-size:16px;color:var(--on-ink-muted)}
+.roster .caption{color:var(--on-ink-muted);margin-top:8px}
 /* ---------- responsive ---------- */
 @media (max-width:1060px){
   .lead{grid-column:1/-1}
@@ -453,7 +460,7 @@ body{background:#f1efea}
         <img src="img/velquiry-anime-hero.webp" width="1600" height="800" alt="Original anime protagonist studying a business diagnostic archive">
         <span class="tag">CASE FILE 001 / ACTIVE</span>
       </figure>
-      <p class="caption"><b>Pictured:</b> a Velquiry analyst working through a business diagnostic archive. Original artwork.</p>
+      <p class="caption"><b>Pictured:</b> the Velquiry analyst, working through a business diagnostic archive. Original artwork.</p>
       <div class="byline"><span>By <b>Chris Basil</b>, founder &amp; CEO</span><span>Singapore</span><span>3 min read</span></div>
       <div class="cols">
         <p>Most founders who call us have already bought something. A new website builder, a CRM, an automation tool, a retainer. The tool works. The enquiries still don&rsquo;t come.</p>
@@ -467,7 +474,7 @@ body{background:#f1efea}
 
     <aside class="rail">
       <div class="scanbox" id="scan">
-        <span class="kicker">Step 02 / Live signal</span>
+        <span class="kicker">Step 02 / Diagnostic unit on duty</span>
         <h2>Run your evidence audit</h2>
         <p>Enter your website. We check it, then show you the evidence behind every finding. No claims are shown before the site is fetched and checked.</p>
         <form class="scanform" id="scan-form" novalidate>
@@ -564,12 +571,14 @@ body{background:#f1efea}
       <span class="sub">The method behind every report.</span>
     </div>
     <div class="think">
-      <div>
-        <figure class="photo">
-          <img src="img/velquiry-archive-crew.webp" width="1600" height="800" alt="Original Velquiry archive analyst, diagnostic unit and strategist" loading="lazy">
-          <span class="tag">ARCHIVE CREW / ACTIVE</span>
-        </figure>
-        <p class="caption"><b>The archive crew:</b> analyst, diagnostic unit, and strategist. Original artwork.</p>
+      <div class="roster">
+        <span class="kicker">The archive crew / Who works your file</span>
+        <ul>
+          <li><b>The analyst</b><span>Reads every page of the archive. Writes the plain-English version first.</span></li>
+          <li><b>The diagnostic unit</b><span>Runs the scan: fetches the page, reads the signals, checks the speed, and refuses to guess.</span></li>
+          <li><b>The strategist</b><span>Turns the evidence into three priorities and the smallest plan that still works.</span></li>
+        </ul>
+        <p class="caption">Original Velquiry characters. See them on the poster above.</p>
       </div>
       <div>
         <p class="think-intro">The first answer is useful. Understanding how we reached it helps you make better decisions long after this report.</p>
@@ -640,7 +649,7 @@ body{background:#f1efea}
         </div>
       </article>
     </div>
-    <p class="disclaim">Composite characters, assembled from proposals founders have shown us. No real firm is depicted.</p>
+    <p class="disclaim">Investigated by the archive crew. Composite characters, assembled from proposals founders have shown us. No real firm is depicted.</p>
   </div>
 </section>
 
