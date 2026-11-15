@@ -1,0 +1,7 @@
+{
+  "name": "xray-mirror-build",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "node build.mjs" },
+  "dependencies": { "@mediapipe/tasks-vision": "0.10.14", "three": "0.160.0" }
+}
