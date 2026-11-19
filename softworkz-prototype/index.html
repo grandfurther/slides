@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="color-scheme" content="dark">
+  <title>Softworkz · Prototype</title>
+  <meta name="description" content="Private prototype. Softworkz designs and builds web platforms, mobile apps, SaaS products and enterprise systems.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ece6da'/%3E%3Cpath d='M21 11.5c-1-1.6-2.700-2.500-5-2.500-3 0-5 1.500-5 3.800 0 5 10 2.200 10 6.700 0 2.200-2 3.500-5 3.500-2.500 0-4.300-1-5.200-2.800' fill='none' stroke='%23090a0c' stroke-width='2.600' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a class="brand" href="./" aria-label="Softworkz home">Softworkz</a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#services">Services</a>
+      <a href="#surveyplus">SurveyPlus</a>
+      <a href="#how-we-build">How We Build</a>
+    </nav>
+    <a class="btn btn-solid nav-cta" href="#start">Start a project</a>
+  </header>
+
+  <main id="main" class="layout">
+    <div class="wordmark" aria-hidden="true">SOFTWORKZ</div>
+
+    <section class="hero chapter" id="top" data-chapter="hero">
+      <p class="eyebrow mono">Softworkz Pte Ltd · Singapore &amp; Australia</p>
+      <h1>Software that gets <br>real work done.</h1>
+      <p class="sub">We design and build web platforms, mobile apps, SaaS products and enterprise systems.</p>
+      <div class="hero-cta">
+        <a class="btn btn-solid" href="#start">Start a project</a>
+        <a class="link" href="#services">Browse services</a>
+      </div>
+    </section>
+
+    <aside class="stage" id="stage" aria-label="Interactive phone">
+      <div class="stage-glow" aria-hidden="true"></div>
+      <div class="stage-3d" id="stage-3d">
+        <canvas id="gl" aria-hidden="true"></canvas>
+        <div class="grab" id="grab" aria-hidden="true"></div>
+        <div class="plane" data-layer="3" aria-hidden="true"></div>
+        <div class="plane" data-layer="2" aria-hidden="true"></div>
+        <div class="plane" data-layer="1" aria-hidden="true"></div>
+        <div class="device" id="device">
+          <div class="screen" id="phone-screen" role="region" aria-label="Softworkz phone. Tap an app to explore.">
+            <div class="sb" aria-hidden="true"><span id="sb-time">9:41</span><i class="punch"></i><span class="sb-r">Prototype</span></div>
+            <div class="view" id="phone-view"></div>
+            <div class="tabbar">
+              <button type="button" id="ph-back" class="tab-b"><span class="tab-ic" data-ic="back"></span>Back</button>
+              <button type="button" id="ph-home" class="tab-b"><span class="tab-ic" data-ic="home"></span>Home</button>
+            </div>
+          </div>
+        </div>
+        <div class="plane-label mono" data-label="0" aria-hidden="true"><b>01</b> Interface</div>
+        <div class="plane-label mono" data-label="1" aria-hidden="true"><b>02</b> Form logic</div>
+        <div class="plane-label mono" data-label="2" aria-hidden="true"><b>03</b> Data</div>
+        <div class="plane-label mono" data-label="3" aria-hidden="true"><b>04</b> Integrations</div>
+      </div>
+      <div class="stage-ui">
+        <p class="stage-cap mono" id="stage-cap" aria-hidden="true">Interface → Form logic → Data → Integrations<br>Prototype illustration · not Softworkz’s internal stack</p>
+        <button type="button" class="btn btn-ghost" id="rotate" aria-pressed="false"><span data-ic="rotate"></span><span id="rotate-label">Rotate phone</span></button>
+      </div>
+    </aside>
+
+    <div class="dock" id="dock" hidden></div>
+
+    <section class="chapter" id="services" data-chapter="services">
+      <p class="eyebrow mono">01 · What we build</p>
+      <h2>Four kinds of software, one working example each.</h2>
+      <p class="lede">Pick a service on the phone, or browse the same content here. Each one has a small demo you can actually use.</p>
+      <div class="svc" id="svc">
+        <div class="svc-tabs" role="tablist" aria-label="Browse services" id="svc-tabs"></div>
+        <div class="svc-panel" id="svc-panel" role="tabpanel" tabindex="0"></div>
+      </div>
+    </section>
+
+    <section class="chapter" id="surveyplus" data-chapter="surveyplus">
+      <p class="eyebrow mono">02 · From phone to operations</p>
+      <h2>Captured on site. Visible at the desk.</h2>
+      <p class="lede">SurveyPlus is Softworkz’s data collection platform: forms with branching logic and validation rules, built for mobile, with data cleaned before it reaches analysis. This sample shows the idea in one record.</p>
+      <ol class="steps">
+        <li>Open <strong>SurveyPlus</strong> on the phone and choose <strong>Needs attention</strong>. A required follow-up field appears.</li>
+        <li>Tap <strong>Save sample inspection</strong>. The record lands in the dashboard below with the same ID and status.</li>
+        <li>Inspect the row, then <strong>Reset demo</strong> to run it again.</li>
+      </ol>
+      <p class="chapter-a">
+        <button type="button" class="btn btn-ghost" id="open-sp">Open the inspection on the phone</button>
+        <a class="link" href="https://www.softworkz.net/solutions/surveyPlus/" rel="noopener">About SurveyPlus on softworkz.net</a>
+      </p>
+      <div class="dash-slot" id="dash-slot"><div class="dash" id="dash"></div></div>
+      <p class="note">Illustrative form and dashboard. They are not the SurveyPlus interface and hold no real data.</p>
+    </section>
+
+    <section class="chapter chapter-tall" id="how-we-build" data-chapter="layers">
+      <div class="pin">
+        <p class="eyebrow mono">03 · Under the hood</p>
+        <h2>One tap, four layers.</h2>
+        <p class="lede">Keep scrolling. The phone separates into the layers a saved inspection passes through, then comes back together.</p>
+        <ol class="layers" id="layers">
+          <li data-step="0"><span class="mono">01</span><div><strong>Interface</strong><p>What the inspector sees and taps.</p><p class="trace mono" data-trace="0"></p></div></li>
+          <li data-step="1"><span class="mono">02</span><div><strong>Form logic</strong><p>Rules decide which fields appear and what is required.</p><p class="trace mono" data-trace="1"></p></div></li>
+          <li data-step="2"><span class="mono">03</span><div><strong>Data</strong><p>The answers become one structured record.</p><p class="trace mono" data-trace="2"></p></div></li>
+          <li data-step="3"><span class="mono">04</span><div><strong>Integrations</strong><p>The record is handed to the systems that need it.</p><p class="trace mono" data-trace="3"></p></div></li>
+        </ol>
+        <p class="note">Prototype illustration of a typical layered app. It does not describe Softworkz’s internal stack.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="start" data-chapter="start">
+      <p class="eyebrow mono">04 · Start a project</p>
+      <div id="brief" class="brief"></div>
+      <p class="note">This page has no backend and no analytics. Office hours: Monday to Friday, 9:30am to 6:00pm.</p>
+    </section>
+
+    <section class="chapter chapter-media" id="the-device" data-chapter="media">
+      <p class="eyebrow mono">The device</p>
+      <h2>Modelled, not filmed.</h2>
+      <p class="lede">The handset in this prototype is a real-time 3D model. These studio stills were generated from a plain-background render of that same model, so what you see here is the device you just used.</p>
+      <div class="stills">
+        <figure><img src="/media/studio-pair.jpg" alt="Studio still of the two handsets: one facing forward with the app grid, one angled behind it showing the round camera assembly" loading="lazy" width="1920" height="1086"><figcaption class="mono">Studio still · generated from the model render</figcaption></figure>
+        <figure><img src="/media/studio-rear.jpg" alt="Close studio still of the handset’s round rear camera assembly with three lenses" loading="lazy" width="1920" height="1086"><figcaption class="mono">Studio still · camera assembly</figcaption></figure>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p>Private prototype for presentation. Not the live Softworkz site.</p>
+      <p class="mono">Softworkz Pte Ltd · <a href="mailto:hello@softworkz.net">hello@softworkz.net</a></p>
+    </footer>
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
