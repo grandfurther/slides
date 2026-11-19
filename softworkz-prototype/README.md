@@ -28,7 +28,7 @@ Everything is bundled locally: Three.js, fonts and media. No CDN, backend or ana
 - `src/store.js` the single client-side state shared by phone, dashboard and layer trace.
 - `src/main.js` routing glue, scroll chapters, fallbacks.
 - `design/hero-board.jpg` the Higgsfield layout board. Its lettering is guidance only; all site copy is HTML.
-- `public/media/` studio stills (Higgsfield, generated from the model render) and the plain local renders they were made from.
+- `public/media/` plain local renders of the current model (`still-*.jpg`, shown on the page) and two earlier Higgsfield studio stills (`studio-*.jpg`, made from the first version of the model, not shown).
 
 ## Checks
 

@@ -1,20 +1,19 @@
-// The handset is modelled here, not filmed: front glass, slim metal frame,
-// matte back and a large round camera assembly. All proportions live in
+// The handset is modelled here, not filmed: edge-to-edge front glass, a slim
+// polished titanium frame, satin glass back and a large round camera assembly. All proportions live in
 // DEVICE so the model can be re-tuned against the reference mockup in one place.
 //
 // The HTML phone screen is the source of truth for layout. The 3D camera is
 // fitted to it every resize, so the live controls sit exactly on the glass and
 // stay ordinary, still DOM while someone is using them.
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 export const DEVICE = {
-  W: 74, H: 160.5, T: 8.4, // body, mm
-  R: 13.5,                 // body corner radius
-  frame: 1.5,              // visible metal frame width
-  bezel: 2.3,              // body edge to active screen
-  screenR: 11.4,           // screen corner radius
-  cam: { y: 42, r: 20.5 }, // camera ring: distance from top edge, outer radius
+  W: 72.6, H: 158.4, T: 7.2, // body, mm (thin, flat-sided)
+  R: 15,                     // body corner radius
+  frame: 1.05,               // visible metal frame width
+  bezel: 1.75,               // body edge to active screen: near edge-to-edge
+  screenR: 13.2,             // screen corner radius
+  cam: { y: 41, r: 21.5 },   // camera ring: distance from top edge, outer radius
 };
 export const SCREEN_W = DEVICE.W - DEVICE.bezel * 2;
 export const SCREEN_H = DEVICE.H - DEVICE.bezel * 2;
@@ -35,67 +34,110 @@ function rr(w, h, r) {
   return s;
 }
 
+// A dark studio with long strip lights. Reflected in polished metal and glass,
+// it gives the thin highlight lines that make a product shot read as premium.
+function studioEnvironment() {
+  const s = new THREE.Scene();
+  s.background = new THREE.Color(0x010102);
+  const light = (w, h, pos, power, color = 0xffffff) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(color).multiplyScalar(power), side: THREE.DoubleSide }));
+    m.position.set(...pos); m.lookAt(0, 0, 0); s.add(m);
+  };
+  light(1.1, 12, [-7, 0.5, 3.2], 14);            // tall key strip, front left
+  light(0.35, 12, [7.2, 0, 2.2], 10, 0xcfe2f5);  // hairline cool strip, front right
+  light(9, 2.2, [0, 8, 3], 5);                   // overhead softbox
+  light(1.2, 9, [-6.5, 1, 6.5], 0.1);            // soft band that sweeps across the satin back
+  light(8, 1.8, [0, 5.2, 8], 0.6);               // low front softbox
+  light(7, 7, [0, 0, 9], 0.16);                  // dim panel behind the camera so forward-facing metal still reads
+  light(12, 0.8, [0, -7, 3], 1.1, 0x7fb2e0);     // faint cool bounce from the floor
+  light(0.5, 10, [-5, 0, -6], 6, 0xcfe2f5);      // rim from behind
+  light(0.5, 10, [5.5, 0, -6], 6);
+  return s;
+}
+
 function buildPhone(mats) {
   const { W, H, T, R, frame, bezel, screenR, cam } = DEVICE;
   const g = new THREE.Group();
-  const b = 1.15; // edge rounding of the frame
+  const b = 0.5; // tight chamfer: flat sides, crisp edge
 
-  // Metal frame: a rounded ring, bevelled front and back.
+  // Metal frame: a flat-sided ring with a fine chamfer front and back.
   const outer = rr(W - b * 2, H - b * 2, R - b);
-  const hole = rr(W - frame * 2 - b * 0.4, H - frame * 2 - b * 0.4, R - frame);
-  outer.holes.push(new THREE.Path(hole.getPoints(24).reverse()));
+  const hole = rr(W - frame * 2, H - frame * 2, R - frame);
+  outer.holes.push(new THREE.Path(hole.getPoints(32).reverse()));
   const frameGeo = new THREE.ExtrudeGeometry(outer, {
-    depth: T - b * 2, bevelEnabled: true, bevelThickness: b, bevelSize: b, bevelSegments: 6, curveSegments: 28,
+    depth: T - b * 2, bevelEnabled: true, bevelThickness: b, bevelSize: b, bevelSegments: 5, curveSegments: 40,
   });
   frameGeo.translate(0, 0, -T + b);
   g.add(new THREE.Mesh(frameGeo, mats.metal));
 
-  // Back panel (faces -z).
-  const back = new THREE.Mesh(new THREE.ShapeGeometry(rr(W - frame * 2, H - frame * 2, R - frame), 28), mats.back);
-  back.rotation.y = Math.PI; back.position.z = -T + 0.25;
+  // Satin glass back, very slightly domed at the edge (faces -z).
+  const backGeo = new THREE.ExtrudeGeometry(rr(W - frame * 2 - 0.5, H - frame * 2 - 0.5, R - frame - 0.25), {
+    depth: 0.2, bevelEnabled: true, bevelThickness: 0.35, bevelSize: 0.3, bevelSegments: 4, curveSegments: 40,
+  });
+  const back = new THREE.Mesh(backGeo, mats.back);
+  back.rotation.y = Math.PI; back.position.z = -T + 0.45;
   g.add(back);
 
   // Front glass and the active display area.
-  const glass = new THREE.Mesh(new THREE.ShapeGeometry(rr(W - frame * 1.6, H - frame * 1.6, R - frame * 0.8), 28), mats.glass);
-  glass.position.z = -0.2;
+  const glass = new THREE.Mesh(new THREE.ShapeGeometry(rr(W - frame * 1.7, H - frame * 1.7, R - frame * 0.85), 40), mats.glass);
+  glass.position.z = -0.12;
   g.add(glass);
-  const screen = new THREE.Mesh(new THREE.ShapeGeometry(rr(W - bezel * 2, H - bezel * 2, screenR), 24), mats.screen);
-  screen.position.z = -0.08;
+  const screen = new THREE.Mesh(new THREE.ShapeGeometry(rr(W - bezel * 2, H - bezel * 2, screenR), 32), mats.screen);
+  screen.position.z = -0.05;
   g.add(screen);
 
-  // Side keys.
+  // Side keys: low, long and flush.
   const key = (x, y, len) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(0.7, len, 2.4), mats.metal);
-    m.position.set(x, y, -T / 2); g.add(m);
+    const m = new THREE.Mesh(new THREE.CapsuleGeometry(0.75, len, 6, 12), mats.metal);
+    m.scale.set(0.42, 1, 1); m.position.set(x, y, -T / 2); g.add(m);
   };
-  key(W / 2 + 0.1, 22, 15);
-  key(-W / 2 - 0.1, 30, 11); key(-W / 2 - 0.1, 15, 11);
+  key(W / 2 + 0.05, 20, 13);
+  key(-W / 2 - 0.05, 24, 20);
 
-  // Round rear camera assembly.
+  // Antenna breaks in the frame.
+  [[W / 2 - 14, H / 2], [-(W / 2 - 14), -H / 2]].forEach(([x, y]) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.12, T - 1.2), mats.seam);
+    m.position.set(x, y + (y > 0 ? 0.02 : -0.02), -T / 2); g.add(m);
+  });
+
+  // Round rear camera assembly: machined bezel, black glass disc, three deep lenses.
   const camG = new THREE.Group();
   camG.position.set(0, H / 2 - cam.y, -T);
   camG.rotation.y = Math.PI; // local +z now points out of the back
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(cam.r - 0.9, 0.95, 20, 96), mats.ring);
-  ring.position.z = 1.9;
-  const cyl = (r, hgt, mat, z, seg = 64) => {
-    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, hgt, seg), mat);
-    m.rotation.x = Math.PI / 2; m.position.z = z; return m;
+  const lathe = (pts, mat) => {
+    const m = new THREE.Mesh(new THREE.LatheGeometry(pts.map(([r, z]) => new THREE.Vector2(r, z)), 128), mat);
+    m.rotation.x = Math.PI / 2; return m;
   };
-  camG.add(ring, cyl(cam.r - 0.9, 1.9, mats.metalDark, 0.95), cyl(cam.r - 1.5, 0.3, mats.glass, 2.0));
-  [[-7.6, 0.4], [5.4, 8.4], [6.0, -7.6]].forEach(([x, y]) => {
+  const disc = (r, z, mat, seg = 96) => { const m = new THREE.Mesh(new THREE.CircleGeometry(r, seg), mat); m.position.z = z; return m; };
+  const r = cam.r;
+  camG.add(
+    lathe([[r, 0], [r, 1.15], [r - 0.35, 1.7], [r - 1.35, 1.95], [r - 1.7, 1.6]], mats.ring),      // polished chamfered bezel
+    disc(r - 1.6, 1.62, mats.glass),                                                           // black glass plate
+    lathe([[r - 3.1, 1.64], [r - 3.0, 1.66], [r - 2.9, 1.64]], mats.lensRing),                    // engraved hairline
+  );
+  [[-8.1, 0.2], [5.6, 8.6], [6.2, -8.0]].forEach(([x, y]) => {
     const lens = new THREE.Group();
-    lens.position.set(x, y, 2.1);
-    lens.add(cyl(6.7, 0.9, mats.metalDark, 0.45), cyl(5.5, 0.5, mats.lens, 0.95), cyl(3.5, 0.12, mats.metalDark, 1.24, 48), cyl(1.7, 0.12, mats.iris, 1.3, 32));
-    const lip = new THREE.Mesh(new THREE.TorusGeometry(6.5, 0.3, 12, 64), mats.lensRing);
-    lip.position.z = 0.95; lens.add(lip);
+    lens.position.set(x, y, 1.63);
+    lens.add(
+      lathe([[7.0, 0], [7.0, 0.55], [6.7, 0.8], [6.0, 0.8], [5.7, 0.5]], mats.lensRing),     // barrel
+      lathe([[5.7, 0.5], [3.4, -0.9], [1.6, -1.3], [0, -1.3]], mats.well),                    // stepped well
+      lathe([[4.6, -0.18], [4.5, -0.1], [4.4, -0.18]], mats.lensRing),
+      disc(1.5, -1.25, mats.iris, 48),
+    );
+    // Coated front element: a shallow dome with a hint of lens-coating colour.
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(13, 48, 12, 0, Math.PI * 2, 0, 0.45), mats.lens);
+    dome.rotation.x = Math.PI / 2; dome.position.z = 0.5 - 13 * Math.cos(0.45) + 0.02;
+    lens.add(dome);
     camG.add(lens);
   });
-  const flash = cyl(1.5, 0.3, mats.flash, 2.2, 24); flash.position.x = -9; flash.position.y = 12.5; camG.add(flash);
+  const flash = disc(1.25, 1.66, mats.flash, 32); flash.position.set(-8.6, 13.2, 1.66);
+  const sensor = disc(0.6, 1.66, mats.well, 24); sensor.position.set(-12.6, 9.4, 1.66);
+  camG.add(flash, sensor);
   g.add(camG);
   return g;
 }
 
-export function createStage({ canvas, stageEl, screenEl, grabEl, planeEls = [], labelEls = [], onRest, reducedMotion }) {
+export function createStage({ canvas, stageEl, screenEl, grabEl, floorEl, planeEls = [], labelEls = [], onRest, reducedMotion }) {
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -104,36 +146,46 @@ export function createStage({ canvas, stageEl, screenEl, grabEl, planeEls = [], 
     return { ok: false };
   }
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 1;
   renderer.setClearColor(0x000000, 0);
 
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.42;
+  scene.environment = pmrem.fromScene(studioEnvironment(), 0.02).texture;
+  scene.environmentIntensity = 1;
 
   const camera = new THREE.PerspectiveCamera(FOV, 1, 50, 6000);
   camera.position.set(0, 0, CAM_D);
 
-  const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(-500, 600, 900);
-  const rim = new THREE.DirectionalLight(0xc4d6e6, 1.1); rim.position.set(700, 300, -500);
-  const glow = new THREE.PointLight(0x7fb2e0, 0.5, 0, 0); glow.position.set(0, -120, -40);
-  scene.add(key, rim, glow);
+  const key = new THREE.DirectionalLight(0xffffff, 0.25); key.position.set(-500, 700, 900);
+  // A soft pool of light from upper left: gives the back a falloff instead of a flat fill.
+  const pool = new THREE.SpotLight(0xf2f5fa, 2.4, 0, 0.19, 1, 0);
+  scene.add(pool, pool.target);
+  const glow = new THREE.PointLight(0x7fb2e0, 0.35, 0, 0); glow.position.set(0, -120, -40);
+  scene.add(key, glow);
 
   const css = getComputedStyle(document.documentElement);
   const screenColor = new THREE.Color(css.getPropertyValue('--screen-bg').trim() || '#0b0d10');
+  const P = THREE.MeshPhysicalMaterial;
   const mats = {
-    metal: new THREE.MeshStandardMaterial({ color: 0x5d6168, metalness: 1, roughness: 0.34 }),
-    metalDark: new THREE.MeshStandardMaterial({ color: 0x15171b, metalness: 0.9, roughness: 0.38 }),
-    ring: new THREE.MeshStandardMaterial({ color: 0xaeb3bb, metalness: 1, roughness: 0.2 }),
-    lensRing: new THREE.MeshStandardMaterial({ color: 0x2a2d33, metalness: 1, roughness: 0.3 }),
-    back: new THREE.MeshPhysicalMaterial({ color: 0x0d0f13, metalness: 0.3, roughness: 0.66, sheen: 0.25, sheenRoughness: 0.7, sheenColor: 0x2c3540 }),
-    glass: new THREE.MeshPhysicalMaterial({ color: 0x040506, metalness: 0, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.04 }),
-    lens: new THREE.MeshPhysicalMaterial({ color: 0x070b14, metalness: 0.2, roughness: 0.03, clearcoat: 1, clearcoatRoughness: 0.02 }),
-    iris: new THREE.MeshStandardMaterial({ color: 0x0a1630, emissive: 0x0f2a55, emissiveIntensity: 0.35, metalness: 0.5, roughness: 0.15 }),
-    flash: new THREE.MeshStandardMaterial({ color: 0xd9d4c4, roughness: 0.5 }),
+    // Dark polished titanium.
+    metal: new P({ color: 0x7b7f87, metalness: 1, roughness: 0.24, clearcoat: 0.6, clearcoatRoughness: 0.12 }),
+    seam: new THREE.MeshStandardMaterial({ color: 0x1b1d21, metalness: 0.2, roughness: 0.6 }),
+    ring: new P({ color: 0xbfc4cc, side: THREE.DoubleSide, metalness: 1, roughness: 0.1, clearcoat: 1, clearcoatRoughness: 0.05 }),
+    lensRing: new THREE.MeshStandardMaterial({ color: 0x1e2126, side: THREE.DoubleSide, metalness: 1, roughness: 0.24 }),
+    well: new THREE.MeshStandardMaterial({ color: 0x030304, side: THREE.DoubleSide, metalness: 0.6, roughness: 0.5 }),
+    // Satin glass: dark, with a soft sweep of light rather than a flat fill.
+    back: new P({ color: 0x101216, envMapIntensity: 0.3, metalness: 0.3, roughness: 0.5, clearcoat: 0.5, clearcoatRoughness: 0.45 }),
+    glass: new P({ color: 0x020203, metalness: 0, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.02 }),
+    lens: new P({ color: 0x04060c, envMapIntensity: 0.28, metalness: 0.1, roughness: 0.02, clearcoat: 1, clearcoatRoughness: 0, iridescence: 1, iridescenceIOR: 1.7, iridescenceThicknessRange: [260, 520], transparent: true, opacity: 0.9 }),
+    iris: new THREE.MeshStandardMaterial({ color: 0x06122a, emissive: 0x0c2552, emissiveIntensity: 0.5, metalness: 0.6, roughness: 0.2 }),
+    flash: new THREE.MeshStandardMaterial({ color: 0xe6dfc8, emissive: 0x3a3626, roughness: 0.35 }),
     screen: new THREE.MeshBasicMaterial({ color: screenColor, toneMapped: false }),
   };
+
+  // Per-material intensity only applies to an explicit envMap, not scene.environment.
+  mats.back.envMap = scene.environment;
+  mats.lens.envMap = scene.environment;
 
   const front = new THREE.Group();
   const frontBody = buildPhone(mats);
@@ -142,6 +194,14 @@ export function createStage({ canvas, stageEl, screenEl, grabEl, planeEls = [], 
   const rear = new THREE.Group();
   rear.add(buildPhone(mats));
   scene.add(rear, front);
+
+  // Polished floor: a mirrored copy of both handsets, faded out by .floor-fade.
+  const mirror = new THREE.Group();
+  mirror.scale.y = -1;
+  const mFront = new THREE.Group(); const mFrontBody = buildPhone(mats); mFront.add(mFrontBody);
+  const mRear = new THREE.Group(); mRear.add(buildPhone(mats));
+  mirror.add(mRear, mFront);
+  scene.add(mirror);
 
   const st = {
     yaw: 0, pitch: 0, yawT: 0, pitchT: 0, flipped: false, dragging: false,
@@ -169,6 +229,10 @@ export function createStage({ canvas, stageEl, screenEl, grabEl, planeEls = [], 
     camera.updateProjectionMatrix();
     stageEl.style.perspective = `${P}px`;
     stageEl.style.perspectiveOrigin = `${cx}px ${cy}px`;
+    if (floorEl) {
+      const top = cy + (DEVICE.H / 2 + 0.6) * st.s * st.k;
+      floorEl.style.top = `${top.toFixed(1)}px`;
+    }
     if (grabEl) {
       const pad = 26, pw = DEVICE.W * st.s * st.k, ph = DEVICE.H * st.s * st.k;
       Object.assign(grabEl.style, { left: `${cx - pw / 2 - pad}px`, top: `${cy - ph / 2 - pad}px`, width: `${pw + pad * 2}px`, height: `${ph + pad * 2}px` });
@@ -195,6 +259,16 @@ export function createStage({ canvas, stageEl, screenEl, grabEl, planeEls = [], 
     rear.position.set((DEVICE.W * 0.96 + e * 500) * s, (-DEVICE.H * 0.05) * s, -150 * s);
     rear.rotation.set(0.02, Math.PI - 0.5, -0.11, 'YXZ');
     glow.position.set(0, -DEVICE.H * 0.35 * s, -30 * s);
+    pool.position.set(-DEVICE.W * 1.1 * s, DEVICE.H * 1.0 * s, DEVICE.H * 2.6 * s);
+    pool.target.position.set(DEVICE.W * 0.45 * s, DEVICE.H * 0.36 * s, 0);
+
+    const floorY = -(DEVICE.H / 2 + 0.6) * s;
+    mirror.visible = e < 0.02;
+    mirror.position.y = 2 * floorY;
+    mFront.position.copy(front.position); mFront.quaternion.copy(front.quaternion); mFront.scale.copy(front.scale);
+    mFrontBody.position.copy(frontBody.position);
+    mRear.visible = rear.visible;
+    mRear.position.copy(rear.position); mRear.quaternion.copy(rear.quaternion); mRear.scale.copy(rear.scale);
 
     const rest = Math.abs(rx) < 0.004 && Math.abs(ry) < 0.004 && e < 0.004 && !st.dragging;
     const rot = `translate3d(${dx.toFixed(2)}px, 0, 0) rotateX(${(-rx).toFixed(5)}rad) rotateY(${ry.toFixed(5)}rad)`;

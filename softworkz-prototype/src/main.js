@@ -7,7 +7,7 @@ import { store, latestRecord } from './store.js';
 import { router } from './router.js';
 import { mountView, serviceView, briefView, icon, h, SERVICES } from './views.js';
 import { mountDashboard } from './dashboard.js';
-import { createStage, SCREEN_W, SCREEN_H } from './phone3d.js';
+import { createStage, DEVICE, SCREEN_W, SCREEN_H } from './phone3d.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -20,6 +20,8 @@ const reducedMotion = () => mqReduce.matches;
 const scrollBehavior = () => (reducedMotion() ? 'auto' : 'smooth');
 
 root.style.setProperty('--screen-ar', (SCREEN_W / SCREEN_H).toFixed(4));
+root.style.setProperty('--screen-r', (DEVICE.screenR / SCREEN_H).toFixed(4));
+root.style.setProperty('--bezel', (DEVICE.bezel / SCREEN_H).toFixed(4));
 if (studio) { root.classList.add('studio'); root.dataset.studio = studio; }
 $$('[data-ic]').forEach((el) => { el.innerHTML = icon(el.dataset.ic, 18); });
 
@@ -142,7 +144,7 @@ $('#open-sp').addEventListener('click', () => {
 
 /* ───────────── The 3D handset ───────────── */
 const stage = createStage({
-  canvas: $('#gl'), stageEl: $('#stage-3d'), screenEl: deviceEl, grabEl: $('#grab'),
+  canvas: $('#gl'), stageEl: $('#stage-3d'), screenEl: deviceEl, grabEl: $('#grab'), floorEl: $('#floor-fade'),
   planeEls, labelEls, reducedMotion,
   onRest(rest) {
     // The live screen only takes input while it is still and facing the visitor.
