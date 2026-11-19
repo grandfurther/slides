@@ -13,6 +13,15 @@ npm run dev        # http://localhost:8111  (strict port: exits if 8111 is busy)
 `npm run build && npm run preview` serves the production build on the same port.
 Everything is bundled locally: Three.js, fonts and media. No CDN, backend or analytics.
 
+### No server
+
+```bash
+npm run standalone   # writes standalone/softworkz-prototype.html
+```
+
+That one file contains everything (code, fonts, images) and opens by double-click.
+When opened from disk, some browsers will not update the `?view=` URL; navigation still works.
+
 ## Demo click path
 
 1. Hero: tap **Web**, **Mobile**, **SaaS** or **Enterprise** on the phone and use the micro-demo. **Back** / **Home** sit in the phone's tab bar. Each view has its own URL (`?view=web`).

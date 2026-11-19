@@ -25,22 +25,25 @@ export const router = {
   go(view, { source = 'user', replace = false } = {}) {
     if (!VIEWS.includes(view)) view = 'home';
     if (view === store.state.view) return;
-    if (replace || source === 'auto') {
-      history.replaceState({ view, depth }, '', urlFor(view));
-    } else {
-      depth += 1;
-      history.pushState({ view, depth }, '', urlFor(view));
-    }
+    // Opened straight from a file, some browsers refuse URL changes; the view still switches.
+    try {
+      if (replace || source === 'auto') {
+        history.replaceState({ view, depth }, '', urlFor(view));
+      } else {
+        history.pushState({ view, depth: depth + 1 }, '', urlFor(view));
+        depth += 1;
+      }
+    } catch { /* keep going without a URL update */ }
     apply(view, source);
   },
   back() {
     if (depth > 0) history.back();
-    else this.go('home', { replace: true });
+    else if (store.state.view !== 'home') { apply('home', 'user'); try { history.replaceState({ view: 'home', depth: 0 }, '', urlFor('home')); } catch { /* file:// */ } }
   },
   home() { this.go('home'); },
   init() {
     const view = readUrl();
-    history.replaceState({ view, depth: 0 }, '', urlFor(view));
+    try { history.replaceState({ view, depth: 0 }, '', urlFor(view)); } catch { /* file:// */ }
     window.addEventListener('popstate', (e) => {
       depth = e.state && typeof e.state.depth === 'number' ? e.state.depth : 0;
       apply(readUrl(), 'history');

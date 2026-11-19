@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "shots": "node scripts/shots.mjs"
+    "shots": "node scripts/shots.mjs",
+    "standalone": "vite build -c vite.standalone.config.js && node -e \"require('fs').renameSync('standalone/index.html','standalone/softworkz-prototype.html')\""
   },
   "devDependencies": {
-    "vite": "^8.3.8"
+    "vite": "^8.3.8",
+    "vite-plugin-singlefile": "^2.3.4"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",
