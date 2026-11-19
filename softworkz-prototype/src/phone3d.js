@@ -177,7 +177,7 @@ export function createStage({ canvas, stageEl, screenEl, grabEl, floorEl, planeE
     // Satin glass: dark, with a soft sweep of light rather than a flat fill.
     back: new P({ color: 0x101216, envMapIntensity: 0.3, metalness: 0.3, roughness: 0.5, clearcoat: 0.5, clearcoatRoughness: 0.45 }),
     glass: new P({ color: 0x020203, metalness: 0, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.02 }),
-    lens: new P({ color: 0x04060c, envMapIntensity: 0.28, metalness: 0.1, roughness: 0.02, clearcoat: 1, clearcoatRoughness: 0, iridescence: 1, iridescenceIOR: 1.7, iridescenceThicknessRange: [260, 520], transparent: true, opacity: 0.9 }),
+    lens: new P({ color: 0x04060c, envMapIntensity: 0.28, metalness: 0.1, roughness: 0.02, clearcoat: 1, clearcoatRoughness: 0, iridescence: 1, iridescenceIOR: 1.7, iridescenceThicknessMinimum: 260, iridescenceThicknessMaximum: 520, transparent: true, opacity: 0.9 }),
     iris: new THREE.MeshStandardMaterial({ color: 0x06122a, emissive: 0x0c2552, emissiveIntensity: 0.5, metalness: 0.6, roughness: 0.2 }),
     flash: new THREE.MeshStandardMaterial({ color: 0xe6dfc8, emissive: 0x3a3626, roughness: 0.35 }),
     screen: new THREE.MeshBasicMaterial({ color: screenColor, toneMapped: false }),
